@@ -19,3 +19,5 @@ function clean_scratch {
 echo 'Downloading annotiations...'
 curl http://images.cocodataset.org/annotations/annotations_trainval2017.zip > "$scratch/annotations.zip"
 unzip "$scratch/annotations.zip" -d ./data/coco/
+
+python ./src/download.py
