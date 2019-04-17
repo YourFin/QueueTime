@@ -1,3 +1,7 @@
+# This code is adapted from
+# https://www.pyimagesearch.com/2018/04/16/keras-and-convolutional-neural-networks-cnns/
+
+
 # USAGE
 # python classify.py --model pokedex.model --labelbin lb.pickle --image examples/charmander_counter.png
 
@@ -26,7 +30,7 @@ image = cv2.imread(args["image"])
 output = image.copy()
  
 # pre-process the image for classification
-image = cv2.resize(image, (96, 96))
+image = cv2.resize(image, (448, 448))
 image = image.astype("float") / 255.0
 image = img_to_array(image)
 image = np.expand_dims(image, axis=0)

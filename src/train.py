@@ -1,9 +1,12 @@
+# This code is adapted from
+# https://www.pyimagesearch.com/2018/04/16/keras-and-convolutional-neural-networks-cnns/
+
+
 # USAGE
 # python train.py --dataset dataset --model pokedex.model --labelbin lb.pickle
 
-# set the matplotlib backend so figures can be saved in the background
-import matplotlib
-matplotlib.use("Agg")
+# # set the matplotlib backend so figures can be saved in the background
+# import matplotlib
 
 # import the necessary packages
 from keras.preprocessing.image import ImageDataGenerator
