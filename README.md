@@ -15,6 +15,8 @@ Finds the length of lines of people in images - Grinnell CSC 262 Computer Vision
 
     pipenv run queuetime
 
+Alternatively the virtual environment can be opened with `pipenv shell`, and then queuetime can be run with `./queuetime`
+
 ### Docker
 1. Install [Docker](https://www.docker.com/get-started)
-2. Run `docker.sh`
+2. Run `docker-compose up`
