@@ -25,4 +25,9 @@ Alternatively the virtual environment can be opened with `pipenv shell`, and the
 
 ### Docker
 1. Install [Docker](https://www.docker.com/get-started)
-2. Run `docker.sh`
+2. Grab the coco api
+
+   git submodule init
+   git submodule update
+
+3. Run `docker.sh`
