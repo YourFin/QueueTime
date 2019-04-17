@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "39ad04a2ce69d3b4403533d4de26d3c1c4a42929d4b5e31ae0558fd1fbb21f6b"
+            "sha256": "348875415a32b292939569a0ed30aa2967427aa38f5471840ddd04cbd6c4e633"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -325,6 +325,10 @@
                 "sha256:ec3c49b6d247152e19110c3a53d9bb4cf917747882017f70796460728b02722e"
             ],
             "version": "==3.7.1"
+        },
+        "pycocotools": {
+            "editable": true,
+            "path": "./src/cocoapi"
         },
         "pyparsing": {
             "hashes": [

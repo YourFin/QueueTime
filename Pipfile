@@ -13,6 +13,7 @@ numpy = "*"
 matplotlib = ">=2.1.0"
 setuptools = ">=18.0"
 cython = ">=0.27.3"
+pycocotools = {editable = true,path = "./src/cocoapi"}
 
 [requires]
 python_version = "3.7"
