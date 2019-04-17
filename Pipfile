@@ -15,6 +15,7 @@ setuptools = ">=18.0"
 cython = ">=0.27.3"
 pycocotools = {editable = true,path = "./src/cocoapi"}
 scikit-learn = "*"
+scikit-image = "*"
 
 [requires]
 python_version = "3.7"

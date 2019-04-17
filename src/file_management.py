@@ -2,10 +2,15 @@ import os
 import logging
 from os.path import dirname
 import re
+import skimage
 
 QUEUETIME_DIR = dirname(dirname(os.path.abspath(__file__)))
 DATASET_DIR = '%s/data/coco' % QUEUETIME_DIR
 ANNOTATION_FILE = '%s/annotations/instances_train2017.json' % DATASET_DIR
+IMAGES_DIR = DATASET_DIR + '/images/'
+
+IMAGE_EXTENSION = 'jpg'
+
 
 # Procedure:
 #  get_downloaded_ids
@@ -14,18 +19,17 @@ ANNOTATION_FILE = '%s/annotations/instances_train2017.json' % DATASET_DIR
 # Parameters:
 #  None
 # Produces:
-#  ids [int] - A list of integers
+#  ids: [int] - A list of integers
 # Preconditions:
 #  None
 # Postconditions:
 #  for each file in queuetime/data/coco/images/, $ids will contain the number
 #  name of the file stripped of the .jpg
 def get_downloaded_ids():
-    image_extension = 'jpg'
-    files = os.listdir(DATASET_DIR + '/images')
+    files = os.listdir(IMAGES_DIR)
     # Verifies that it is an image
-    img_pattern = re.compile('\d+\.jpg')
-    ext_pattern = re.compile('\.jpg$')
+    img_pattern = re.compile('\d+\.' + IMAGE_EXTENSION)
+    ext_pattern = re.compile('\.' + IMAGE_EXTENSION + '$')
     ids = []
     for file in files:
         if not img_pattern.match(file):
@@ -34,3 +38,18 @@ def get_downloaded_ids():
 
         ids.append(int(ext_pattern.sub('', file)))
     return ids
+
+# Procedure:
+#  get_image
+# Purpose:
+#  Return the image array with the given id
+# Parameters:
+#  id: int - the id of the image to be loaded
+# Produces:
+#  img: numpy[int][int][int] - the image in the file
+# Preconditions:
+#  A picture with the given id exists
+# Postconditions:
+#  Trivial
+def get_image(id):
+    return skimage.io.imread('%s%012d.%s' % (IMAGES_DIR, id, IMAGE_EXTENSION))
