@@ -11,7 +11,9 @@ git submodule init
 git submodule update
 ```
 
-3. Run `./docker.sh`
+3. Run `./docker.sh download` to download the coco dataset
+
+4. Run `./docker.sh`
 
 For a python shell with access to all of the libraries used, run:
 
@@ -43,11 +45,16 @@ git submodule init
 git submodule update
 ./gen_coco_3.sh
 ```
-
-4. Run `queuetime`:
+4. Download the coco dataset:
 
 ```bash
- pipenv run queuetime
+pipenv run ./COCO_download.sh
+```
+
+5. Run `queuetime`:
+
+```bash
+pipenv run queuetime
 ```
 
 Alternatively the virtual environment can be opened with `pipenv shell`, and then queuetime can be run with `./queuetime`

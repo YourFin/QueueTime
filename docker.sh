@@ -28,6 +28,8 @@ if [ "$1" == "shell" ]; then
     docker-compose run queuetime bash
 elif [ "$1" == "python" ]; then
     docker-compose run queuetime python
+elif [ "$1" == "download" ]; then
+    docker-compose run queuetime /app/COCO_download.sh
 else
     docker-compose up
 fi
