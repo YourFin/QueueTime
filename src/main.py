@@ -1,3 +1,7 @@
 #!/usr/bin/env python3
 
-import
+from keras.layers import Dense, Dropout, Activation, Flatten
+
+from keras.layers import Convolution2D, MaxPooling2D
+
+import cocoapi.pycocotools
