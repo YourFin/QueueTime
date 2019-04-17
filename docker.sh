@@ -26,8 +26,8 @@ fi
 
 if [ "$1" == "shell" ]; then
     docker-compose run queuetime bash
-    if [ "$1" == "python" ]; then
-        docker-compose run queuetime bash
+elif [ "$1" == "python" ]; then
+    docker-compose run queuetime python
 else
     docker-compose up
 fi
