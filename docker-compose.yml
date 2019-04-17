@@ -4,3 +4,5 @@ services:
   queuetime:
     build: .
     command: './queuetime'
+    volumes:
+      - ./data:/app/data/

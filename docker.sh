@@ -24,4 +24,10 @@ if ! (cmp Pipfile .version_test/Pipfile &>/dev/null && cmp Pipfile .version_test
         cp -f Pipfile.lock .version_test/Pipfile.lock || exit 1
 fi
 
-docker-compose up
+if [ "$1" == "shell" ]; then
+    docker-compose run queuetime bash
+    if [ "$1" == "python" ]; then
+        docker-compose run queuetime bash
+else
+    docker-compose up
+fi
