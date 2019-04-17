@@ -11,7 +11,13 @@ Finds the length of lines of people in images - Grinnell CSC 262 Computer Vision
 
     pipenv install
 
-3. Run `queuetime`:
+3. Build the coco api:
+
+   git submodule init
+   git submodule update
+   ./gen_coco_3.sh
+
+4. Run `queuetime`:
 
     pipenv run queuetime
 
@@ -19,4 +25,4 @@ Alternatively the virtual environment can be opened with `pipenv shell`, and the
 
 ### Docker
 1. Install [Docker](https://www.docker.com/get-started)
-2. Run `docker-compose up`
+2. Run `docker.sh`
