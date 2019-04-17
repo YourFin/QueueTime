@@ -18,7 +18,7 @@ if [ ! -f '.version_test/Pipfile.lock' ]; then
 fi
 
 # If the files don't match the cache
-if ! (cmp Pipfile .version_test/Pipfile >/dev/null 2>&1 && cmp Pipfile .version_test/Pipfile >/dev/null 2>&1) ; then
+if ! (cmp Pipfile .version_test/Pipfile &>/dev/null && cmp Pipfile .version_test/Pipfile &>/dev/null) ; then
     docker-compose build queuetime &&
         cp -f Pipfile .version_test/Pipfile &&
         cp -f Pipfile.lock .version_test/Pipfile.lock || exit 1

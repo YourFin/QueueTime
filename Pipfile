@@ -10,7 +10,9 @@ opencv-python = "*"
 keras = "*"
 tensorflow = "*"
 numpy = "*"
-matplotlib = "*"
+matplotlib = ">=2.1.0"
+setuptools = ">=18.0"
+cython = ">=0.27.3"
 
 [requires]
 python_version = "3.7"
