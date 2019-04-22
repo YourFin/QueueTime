@@ -32,19 +32,20 @@ And for a bash instance under docker, run:
 pip install --user pipenv
 ```
 
-2. Install dependencies:
-
-```bash
-pipenv install
-```
-
-3. Build the coco api:
+2. Get the COCO api ready:
 
 ```bash
 git submodule init
 git submodule update
 ./gen_coco_3.sh
 ```
+
+3. Install dependencies:
+
+```bash
+pipenv install
+```
+
 4. Download the coco dataset:
 
 ```bash

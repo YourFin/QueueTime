@@ -25,4 +25,3 @@ cd src/cocoapi
 
 # Convert it to python3
 2to3 . -w >/dev/null
-make
