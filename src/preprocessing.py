@@ -79,5 +79,8 @@ def gen_training_tensors(coco, bounding_box_count, cell_width, cell_height, img)
 
 
 # Returns a generator of tuples: (img, training tensor)
+# Normalize the image matrix (set all the value in the range
+# [0, 1]) We should discuss whether we want to standardize (z-score) our data or
+# not. 
 def get_training_data_generator(cell_rows, cell_columns, bounding_box_count, image_width, image_height):
     pass
