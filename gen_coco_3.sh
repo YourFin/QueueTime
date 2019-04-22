@@ -11,18 +11,11 @@ function finish {
 pushd "$(dirname "$0")" >/dev/null || exit 1
 trap finish EXIT
 
-mkdir -p ./lib/cocoapi
+mkdir -p ./lib/
 # Copy over the directory if it doesn't exist
-[ -d "./lib/cocoapi" ] || cp -r cocoapi/PythonAPI lib/cocoapi
+cp -r --remove-destination ./cocoapi ./lib/
 
-function remove_common_coco_files {
-    rm -rf cocoapi/common
-    finish
-}
-trap remove_common_coco_files EXIT
-cp -r cocoapi/common lib/common || exit 1
-
-cd lib/cocoapi
+cd lib/cocoapi/PythonAPI
 
 # Convert it to python3
 2to3 . -w >/dev/null

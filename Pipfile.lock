@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "f97a7457f191f3a2771de0a6b0654addd2d0c71ba2a720abcaadfc4214ab090d"
+            "sha256": "e68fa9a96d47a1ebcaec1139efc05190b5eef61dae329be7e502beed752c65e4"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -380,7 +380,7 @@
         },
         "pycocotools": {
             "editable": true,
-            "path": "./lib/cocoapi"
+            "path": "lib/cocoapi/PythonAPI"
         },
         "pyparsing": {
             "hashes": [
