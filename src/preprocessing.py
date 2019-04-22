@@ -69,11 +69,13 @@ def gen_training_tensors(coco, bounding_box_count, cell_width, cell_height, img)
     annotation_ids = coco.getAnnIds(imgIds=[img['id']], catIds=person_cat_ids)
     annotations = coco.loadAnns(annotation_ids)
 
-    cell_x_conut = ceil(img.shape[0] / cell_size)
-    cell_y_conut = ceil(img.shape[1] / cell_size)
-
+    cell_x_count = ceil(img.shape[0] / cell_width)
+    cell_y_count = ceil(img.shape[1] / cell_height)
     # 5 parameters to each bounding box: Probability, X pos, Y pos, Width, Height
     training_data = np.zeros((cell_x_count, cell_y_count, bounding_box_count * 5))
+
+    for annotation in annotations:
+        annotation
 
 
 # Returns a generator of tuples: (img, training tensor)
