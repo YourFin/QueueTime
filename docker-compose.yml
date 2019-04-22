@@ -6,3 +6,4 @@ services:
     command: './queuetime'
     volumes:
       - ./data:/app/data/
+      - ./src:/app/src/
