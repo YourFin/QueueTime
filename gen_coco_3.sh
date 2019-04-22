@@ -11,6 +11,7 @@ function finish {
 pushd "$(dirname "$0")" >/dev/null || exit 1
 trap finish EXIT
 
+mkdir -p ./lib/cocoapi
 # Copy over the directory if it doesn't exist
 [ -d "./lib/cocoapi" ] || cp -r cocoapi/PythonAPI lib/cocoapi
 
