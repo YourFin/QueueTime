@@ -41,13 +41,14 @@ args = vars(ap.parse_args())
 # batch size, and image dimensions
 
 DATA_SIZE = 64115
-EPOCHS = 100     
-INIT_LR = 1e-3   #0.001
+EPOCHS = 5     
+INIT_LR = 1e-3   #0.001 learning_rate
 BS = 32
 IMAGE_DIMS = (640, 640, 3)
 CELL_ROW = 3
 CELL_COL = 20
 BOUNDING_BOX_COUNT = 1
+NUM_CLASSES = 1
 
 # initialize the data and labels
 # data = []
@@ -97,10 +98,10 @@ aug = ImageDataGenerator(rotation_range=25, width_shift_range=0.1,
 # initialize the model
 print("[INFO] compiling model...")
 model = QueueTimeNet.build(width=IMAGE_DIMS[1], height=IMAGE_DIMS[0],
-	depth=IMAGE_DIMS[2], classes=len(lb.classes_))
+	depth=IMAGE_DIMS[2], classes=NUM_CLASSES)
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
-model.compile(loss="categorical_crossentropy", optimizer=opt,
-	metrics=["accuracy"])
+model.compile(loss=Queuetime_loss, optimizer=opt,
+	metrics=["accuracy"]) # not sure about the metrics, decided later
 
 # train the network
 print("[INFO] training network...")
@@ -115,12 +116,13 @@ print("[INFO] serializing network...")
 model.save(args["model"])
 
 # save the label binarizer to disk
-print("[INFO] serializing label binarizer...")
-f = open(args["labelbin"], "wb")
-f.write(pickle.dumps(lb))
-f.close()
+# print("[INFO] serializing label binarizer...")
+# f = open(args["labelbin"], "wb")
+# f.write(pickle.dumps(lb))
+# f.close()
 
 # plot the training loss and accuracy
+# check this later
 plt.style.use("ggplot")
 plt.figure()
 N = EPOCHS
