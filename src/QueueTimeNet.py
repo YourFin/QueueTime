@@ -3,17 +3,26 @@
 
 
 # import the necessary packages
+import numpy as np
+import keras
+
 from keras.models import Sequential
 from keras.layers.normalization import BatchNormalization
-from keras.layers.convolutional import Conv3D
-from keras.layers.convolutional import MaxPooling2D
+from keras.layers.convolutional import *
 from keras.layers.core import Activation
 from keras.layers.core import Flatten
 from keras.layers.core import Dropout
 from keras.layers.core import Dense
+
+from keras.preprocessing.image import ImageDataGenerator
+
 from keras import backend as K
 
-class QueueTimeNet:
+class QueueTimeNet: 
+	# Get the training data in: 
+	get_training_data_generator
+	train_batches = ImageDataGenerator().flow()
+
 	@staticmethod
 	def build(width, height, depth, classes):
 		# initialize the model along with the input shape to be
