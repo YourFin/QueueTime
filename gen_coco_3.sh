@@ -15,7 +15,7 @@ mkdir -p ./lib/
 # Copy over the directory if it doesn't exist
 cp -r --remove-destination ./cocoapi ./lib/
 
-cd lib/cocoapi/PythonAPI
+cd lib/cocoapi/PythonAPI || exit 1
 
 # Convert it to python3
 2to3 . -w >/dev/null
