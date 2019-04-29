@@ -2,25 +2,7 @@ import logging
 import numpy as np
 from math import ceil
 import file_management
-
-# Procedure:
-#  get_image_annotations
-# Purpose:
-#  To get the annotations corresponding to a given image
-# Parameters:
-#  coco: pycocotools.coco.coco
-#  img_id: int - id of the image to look up
-# Produces:
-#  output: [dict(str, object)] - annotation data for a given object
-# Preconditions:
-#  img_id is valid in $coco
-# Postconditions:
-#  All annotations in $coco of humans are returned in output
-def get_image_annotations(coco, img_id):
-    img = coco.loadImgs([img_id])[0]
-    person_cat_ids = coco.getCatIds(catNms=['person'])
-    annotation_ids = coco.getAnnIds(imgIds=[img['id']], catIds=person_cat_ids)
-    return coco.loadAnns(annotation_ids)
+from annotations import get_image_annotations
 
 # Procedure:
 #  pad_image
@@ -70,7 +52,7 @@ def pad_image(mask):
 
 
 # Procedure:
-#  gen_training_tensors
+#  gen_training_tensor
 # Purpose:
 #  To generate the ground truth corresponding to a given image.
 # Parameters:
@@ -87,7 +69,7 @@ def pad_image(mask):
 #  cell_width < width of image
 #  cell_height < height of image
 #  bounding_box_count >= 1
-def gen_training_tensors(coco, bounding_box_count, cell_width, cell_height, img_id):
+def gen_training_tensor(coco, bounding_box_count, cell_width, cell_height, img_id):
     # Force bounding_box_count to 1 - See NOTE in above documentation
     bounding_box_count = 1
 
@@ -161,7 +143,47 @@ def gen_training_tensors(coco, bounding_box_count, cell_width, cell_height, img_
 
     return training_data
 
-
+# Procedure:
+#  ground_truth_factory
+# Purpose:
+#  To create a generator for ground truth data corresponding to image ids
+# Parameters:
+#  coco: COCO - a coco instance to pull annotation information from
+#  bounding_box_count: int - number of bounding boxes per cell; known as B in YOLO paper
+#    NOTE: Dead paramater for now - only works with one
+#  cell_width: int - the width in pixels of a cell in the image.
+#  cell_height: int - the height in pixels of a cell in the image.
+#  image_ids: [int] - list of image ids to return
+#  buffer_size: int = 0 - amount of data to buffer ahead of time
+#    NOTE: Not implemented
+#  save_data: bool = false - whether to save data to disk for recall
+#    NOTE: Not implemented
+#  load_data: bool = true - whether to check the disk for saved version of the training data
+#    NOTE: Not implemented
+# Produces:
+#  output: generator(np.array(float32)) - generator of numpy arrays
+# Preconditions:
+#  COCO contains all given image ids
+#  cell_width < min(width(imgs)) - should be fairly small
+#  cell_hegiht < min(hegiht(imgs)) - should be fairly small
+# Postconditions:
+#  generator yields numpy arrays as defined gen_training_tensor
+def ground_truth_factory(
+        coco,
+        bounding_box_count,
+        cell_width,
+        cell_height,
+        image_ids,
+        buffer_size=0,
+        save_data=False,
+        load_data=True):
+    for id in image_ids:
+        yield gen_training_tensor(
+            coco,
+            bounding_box_count,
+            cell_width,
+            cell_height,
+            id)
 
 # Procedure:
 #  image_gen_factory
@@ -175,10 +197,13 @@ def gen_training_tensors(coco, bounding_box_count, cell_width, cell_height, img_
 # Preconditions:
 #  image_ids refer to actual images on disk as defined in file_management.py
 # Postconditions:
-#  image_id is read in with the thing
+#  All image ids exist
+#  values in output are bounded between 0 and 1
 def image_gen_factory(image_ids, buffer_size=0):
     for id in image_ids:
-        yield file_management.get_image(id)
+        image = file_management.get_image(id)
+        image = np.divide(image, 256, dtype=np.float32)
+        yield image
 
 # Returns a generator of tuples: (img, training tensor)
 # Normalize the image matrix (set all the value in the range
