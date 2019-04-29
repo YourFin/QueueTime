@@ -52,6 +52,12 @@ def get_downloaded_ids():
 # Postconditions:
 #  Trivial
 def get_image(id):
-    img = skimage.io.imread('%s%012d.%s' % (IMAGES_DIR, id, IMAGE_EXTENSION))
+    try:
+        img = skimage.io.imread('%s%012d.%s' % (IMAGES_DIR, id, IMAGE_EXTENSION))
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            'The file corresponding to %d does not exist; ' % id +
+            'please download it with download.download_imgs'
+        )
     # Remove alpha channel if present (i.e.)
     return img_array[..., ..., :2]
