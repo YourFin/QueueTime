@@ -2,7 +2,7 @@ import os
 import logging
 from os.path import dirname
 import re
-import skimage
+from matplotlib.image import imread
 
 QUEUETIME_DIR = dirname(dirname(os.path.abspath(__file__)))
 DATASET_DIR = '%s/data/coco' % QUEUETIME_DIR
@@ -53,11 +53,11 @@ def get_downloaded_ids():
 #  Trivial
 def get_image(id):
     try:
-        img = skimage.io.imread('%s%012d.%s' % (IMAGES_DIR, id, IMAGE_EXTENSION))
+        img_array = imread('%s%012d.%s' % (IMAGES_DIR, id, IMAGE_EXTENSION))
     except FileNotFoundError:
         raise FileNotFoundError(
             'The file corresponding to %d does not exist; ' % id +
             'please download it with download.download_imgs'
         )
     # Remove alpha channel if present (i.e.)
-    return img_array[..., ..., :2]
+    return img_array[:, :, 2]
