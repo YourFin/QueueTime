@@ -1,5 +1,5 @@
 from pycocotools.coco import COCO
-from .file_management import ANNOTATION_FILE
+from file_management import ANNOTATION_FILE
 
 # Hardcoded parameters
 CATEGORY_NAMES = ['person']
