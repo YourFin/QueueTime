@@ -29,60 +29,133 @@ class QueueTimeNet:
 		chanDim = -1
 
 		# Conv. Layer 7x7x64-s-2
-		model.add(Conv3D(64, (7, 7, depth), padding="same",
+		model.add(Conv2D(64, (7, 7), stride = 2, padding="same",
 			input_shape=inputShape))
-		model.add(LeakyReLU(alpha=0.1))
-		model.add(BatchNormalization(axis=chanDim))
+		model.add(BatchNormalization(axis=chanDim)) #order matters?
+		model.add(LeakyReLU(alpha=0.1)) #order matters?
 		model.add(MaxPooling2D(pool_size=(2, 2)))
 		
 		# Conv. Layer 3x3x192
-		model.add(Conv3D(192, (3, 3, 1), padding="same",
-			input_shape=inputShape))
-		model.add(LeakyReLU(alpha=0.1))
+		model.add(Conv2D(192, (3, 3), padding="same"))
 		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
 		model.add(MaxPooling2D(pool_size=(2, 2)))
 
 
-		# Conv. Layer 1x1x512
-		model.add(Conv3D(512, (1, 1, 192), padding="same",
-			input_shape=inputShape))
-		model.add(LeakyReLU(alpha=0.1))
+		# Conv. Layers *4
+		model.add(Conv2D(128, (1, 1), padding="same"))
 		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
+
+		model.add(Conv2D(256, (3, 3), padding="same",)
+			input_shape=inputShape))
+		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
+
+		model.add(Conv2D(256, (1, 1), padding="same"))
+		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
+
+		model.add(Conv2D(512, (3, 3), padding="same"))
+		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
 		model.add(MaxPooling2D(pool_size=(2, 2)))
 
-		# should have more layers for better result
-
-		# Conv. Layer 1x1x1024
-		model.add(Conv3D(1024, (1, 1, 512), padding="same",
-			input_shape=inputShape))
-		model.add(LeakyReLU(alpha=0.1))
+        # Conv. Layers  4*2 + 2 
+		model.add(Conv2D(256, (1, 1), padding="same"))
 		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
+
+		model.add(Conv2D(512, (3, 3), padding="same"))
+		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
+
+		model.add(Conv2D(256, (1, 1), padding="same"))
+		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
+
+		model.add(Conv2D(512, (3, 3), padding="same"))
+		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
+
+		model.add(Conv2D(256, (1, 1), padding="same"))
+		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
+
+		model.add(Conv2D(512, (3, 3), padding="same"))
+		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
+
+		model.add(Conv2D(256, (1, 1), padding="same"))
+		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
+
+		model.add(Conv2D(512, (3, 3), padding="same"))
+		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
+
+		model.add(Conv2D(512, (1, 1), padding="same"))
+		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
+
+		model.add(Conv2D(1024, (3, 3), padding="same"))
+		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
 		model.add(MaxPooling2D(pool_size=(2, 2)))
 
-		# should have more layers for better result 
-
-		# Conv. Layer 2x2x1024-s-2
-		model.add(Conv3D(1024, (2, 2, 1024), stride = (2, 2, 1), padding="same",
-			input_shape=inputShape))
-		model.add(LeakyReLU(alpha=0.1))
+		# Conv. Layer * 2*2 + 2
+		model.add(Conv2D(512, (1, 1), padding="same"))
 		model.add(BatchNormalization(axis=chanDim))
-
-		# Conv. Layer 3x3x1024
-		model.add(Conv3D(1024, (2, 2, 1024), padding="same",
-			input_shape=inputShape))
 		model.add(LeakyReLU(alpha=0.1))
-		model.add(BatchNormalization(axis=chanDim))
 
-		# first (and only) set of FC => RELU layers
-		model.add(Flatten())
-		model.add(Dense(4096))
-		model.add(Activation("relu"))
-		model.add(BatchNormalization())
+		model.add(Conv2D(1024, (3, 3), padding="same"))
+		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
+
+		model.add(Conv2D(512, (1, 1), padding="same"))
+		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
+
+		model.add(Conv2D(1024, (3, 3), padding="same"))
+		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
+
+		model.add(Conv2D(1024, (3, 3), padding="same"))
+		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
+
+		model.add(Conv2D(1024, (3, 3), stride = 2, padding="valid"))
+		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
+
+		# Conv. Layer * 2
+		model.add(Conv2D(1024, (3, 3), padding="same")
+		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
+
+		model.add(Conv2D(1024, (3, 3), padding="same")
+		model.add(BatchNormalization(axis=chanDim))
+		model.add(LeakyReLU(alpha=0.1))
+
+		# first FC
+		# model.add(Flatten())
+		# model.add(Dense(4096))
+		# model.add(Dense(classes))
+
+        #z said to use conv layer instead of fc layer, blame her if this is wrong
 		model.add(Dropout(0.5))
+		model.add(Conv2D(5, (3, 3), padding="same")
+		model.add(Activation("relu"))
+		# model.add(BatchNormalization())
 
 		# softmax classifier
-		model.add(Dense(classes))
-		model.add(Activation("softmax"))
+		# model.add(Activation("softmax"))
 
 		# return the constructed network architecture
 		return model
+
+	def Queuetime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
+		coord = 5;
+		noobj = 0.5;
+		
+		
