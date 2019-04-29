@@ -4,6 +4,25 @@ from math import ceil
 import file_management
 
 # Procedure:
+#  get_image_annotations
+# Purpose:
+#  To get the annotations corresponding to a given image
+# Parameters:
+#  coco: pycocotools.coco.coco
+#  img_id: int - id of the image to look up
+# Produces:
+#  output: [dict(str, object)] - annotation data for a given object
+# Preconditions:
+#  img_id is valid in $coco
+# Postconditions:
+#  All annotations in $coco of humans are returned in output
+def get_image_annotations(coco, img_id):
+    img = coco.loadImgs([img_id])[0]
+    person_cat_ids = coco.getCatIds(catNms=['person'])
+    annotation_ids = coco.getAnnIds(imgIds=[img['id']], catIds=person_cat_ids)
+    return coco.loadAnns(annotation_ids)
+
+# Procedure:
 #  pad_image
 # Purpose:
 #  To pad an image in pre-processing to a square aspect ratio
@@ -85,10 +104,7 @@ def gen_training_tensors(coco, bounding_box_count, cell_width, cell_height, img_
     POS_BOX_HEIGHT = 3
     POS_OBJ_LIKELYHOOD = 4
 
-    img = coco.loadImgs([img_id])
-    person_cat_ids = coco.getCatIds(catNms=['person'])
-    annotation_ids = coco.getAnnIds(imgIds=[img['id']], catIds=person_cat_ids)
-    annotations = coco.loadAnns(annotation_ids)
+    annotations = get_image_annotations(coco, img_id)
 
     cell_x_count = ceil(img.shape[0] / cell_width)
     cell_y_count = ceil(img.shape[1] / cell_height)
