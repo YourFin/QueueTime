@@ -20,7 +20,14 @@ PADDED_SIZE = 640
 # Postconditions:
 #  dim_size(output, 0) == dim_size(output, 1)
 def pad_image(img, size):
-    (X_size, Y_size, _) = img.shape
+    try:
+        (X_size, Y_size, _) = img.shape
+    except Exception as e:
+        print(img)
+        raise e
+    #X_size = img.shape[0]
+    #Y_size = img.shape[1]
+
     return np.pad(img, ((0, size - X_size),(0, size - Y_size), (0, 0)), 'constant')  # Default to 0
 
 # Procedure:
