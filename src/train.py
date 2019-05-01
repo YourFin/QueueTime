@@ -83,7 +83,7 @@ print("[INFO] loading images...")
 
 coco = COCO(ANNOTATION_FILE)
 
-labels = all_ground_truth_numpy(coco, 1, CELL_ROW, CELL_COL)
+labels = all_ground_truth_numpy(coco, 1, CELL_WIDTH, CELL_HEIGHT)
 data = all_imgs_numpy()
 
 # scale the raw pixel intensities to the range [0, 1]

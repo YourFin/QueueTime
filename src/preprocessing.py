@@ -248,10 +248,10 @@ def all_imgs_numpy():
 def all_ground_truth_numpy(
         coco,
         bounding_box_count,
-        cell_rows,
-        cell_columns):
+        cell_width,
+        cell_height):
     img_ids = get_downloaded_ids()
-    output = np.empty((len(img_ids), cell_rows, cell_columns, bounding_box_count * 5), np.float)
+    output = np.empty((len(img_ids), int(640/cell_height), int(640/cell_width), bounding_box_count * 5), np.float)
     gen = ground_truth_factory(coco, bounding_box_count, cell_width, cell_height, img_ids)
     for index in range(len(img_ids)):
         output[index, :, :, :] = next(gen)
