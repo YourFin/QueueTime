@@ -6,4 +6,5 @@ function finish {
 pushd "$(dirname "$0")" >/dev/null || exit 1
 trap finish EXIT
 
-python -i ./src/main.py
+cd ./src
+python -i ./main.py
