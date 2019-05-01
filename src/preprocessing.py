@@ -206,7 +206,8 @@ def image_gen_factory(image_ids, buffer_size=0):
 # Practica:
 #  This is a bit of a hack, makes a lot of assumptions
 def all_imgs_numpy(num_images):
-    img_ids = get_downloaded_ids()[:num_images]
+    img_ids = get_downloaded_ids()
+    img_ids = list(filter(is_not_greyscale, img_ids))[:num_images]
     imgs = np.empty((len(img_ids), 640, 640, 3), np.float)
     gen = image_gen_factory(img_ids)
     for index in range(len(img_ids)):
