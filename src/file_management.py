@@ -3,8 +3,6 @@ import logging
 from os.path import dirname
 import re
 from matplotlib.image import imread
-import cv2
-import cv
 
 QUEUETIME_DIR = dirname(dirname(os.path.abspath(__file__)))
 DATASET_DIR = '%s/data/coco' % QUEUETIME_DIR
