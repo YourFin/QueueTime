@@ -101,7 +101,7 @@ print("[INFO] data matrix: {:.2f}MB".format(
 (trainX, testX, trainY, testY) = train_test_split(data,
 	labels, test_size=0.2, random_state=42)
 
-print("[INFO] the true size", trainY[0,...].shape)
+print("[INFO] the true size", label.shape)
 
 # construct the image generator for data augmentation
 aug = ImageDataGenerator(rotation_range=25, width_shift_range=0.1,
