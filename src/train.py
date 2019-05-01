@@ -111,8 +111,7 @@ print("[INFO] compiling model...")
 model = build(width=IMAGE_DIMS[1], height=IMAGE_DIMS[0],
 	depth=IMAGE_DIMS[2], classes=NUM_CLASSES)
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
-model.compile(loss=QueueTime_loss, optimizer=opt,
-	metrics=["accuracy"]) # not sure about the metrics, decided later
+model.compile(loss=QueueTime_loss, optimizer=opt) # not sure about the metrics, decided later
 
 # train the network
 print("[INFO] training network...")
