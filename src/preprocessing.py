@@ -205,8 +205,8 @@ def image_gen_factory(image_ids, buffer_size=0):
 #  out contains every image in data/coco
 # Practica:
 #  This is a bit of a hack, makes a lot of assumptions
-def all_imgs_numpy():
-    img_ids = get_downloaded_ids()
+def all_imgs_numpy(num_images):
+    img_ids = get_downloaded_ids()[:num_images]
     imgs = np.empty((len(img_ids), 640, 640, 3), np.float)
     gen = image_gen_factory(img_ids)
     for index in range(len(img_ids)):
@@ -232,13 +232,14 @@ def all_imgs_numpy():
 #  all images defined on disk correspond to images defined here
 def all_ground_truth_numpy(
         coco,
+        num_images,
         bounding_box_count,
         cell_width,
         cell_height):
     #assert(cell_rows == ceil(PADDED_SIZE/cell_height))
     #assert(cell_columns == ceil(PADDED_SIZE/cell_width))
     img_ids = get_downloaded_ids()
-    img_ids = list(filter(is_not_greyscale, img_ids))
+    img_ids = list(filter(is_not_greyscale, img_ids))[:num_images]
     output = np.empty((len(img_ids), ceil(PADDED_SIZE/cell_height), ceil(PADDED_SIZE/cell_width), bounding_box_count * 5), np.float)
     gen = ground_truth_factory(coco, bounding_box_count, cell_width, cell_height, img_ids)
     for index in range(len(img_ids)):

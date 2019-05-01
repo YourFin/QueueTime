@@ -39,6 +39,7 @@ ap.add_argument("-m", "--model", required=True,
 	help="path to output model")
 # ap.add_argument("-l", "--labelbin", required=True,
 # 	help="path to output label binarizer")
+ap.add_argument("-i", "--image_count", type=int, default=500)
 ap.add_argument("-p", "--plot", type=str, default="plot.png",
 	help="path to output accuracy/loss plot")
 args = vars(ap.parse_args())
@@ -83,8 +84,8 @@ print("[INFO] loading images...")
 
 coco = COCO(ANNOTATION_FILE)
 
-labels = all_ground_truth_numpy(coco, 1, CELL_WIDTH, CELL_HEIGHT)
-data = all_imgs_numpy()
+labels = all_ground_truth_numpy(coco, args["image_count"], 1, CELL_WIDTH, CELL_HEIGHT)
+data = all_imgs_numpy(args["image_count"])
 
 # scale the raw pixel intensities to the range [0, 1]
 # data = np.array(data, dtype="float") / 255.0
