@@ -249,8 +249,7 @@ def all_ground_truth_numpy(
         coco,
         bounding_box_count,
         cell_width,
-        cell_height,
-        image_ids):
+        cell_height):
     img_ids = get_downloaded_ids()
     output = np.empty((len(img_ids), 640 / cell_height, 640 / cell_width, bounding_box_count * 5), np.float)
     gen = ground_truth_factory(coco, bounding_box_count, cell_width, cell_height, img_ids)

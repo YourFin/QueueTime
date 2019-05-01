@@ -6,7 +6,7 @@
 # python train.py --dataset dataset --model pokedex.model --labelbin lb.pickle
 
 # # set the matplotlib backend so figures can be saved in the background
-from preprocessing import get_training_data_generator
+from preprocessing import all_imgs_numpy, all_ground_truth_numpy
 from QueueTimeNet import build, QueueTime_loss
 
 # import the necessary packages
@@ -14,17 +14,22 @@ import matplotlib
 from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import Adam
 from keras.preprocessing.image import img_to_array
-from sklearn.preprocessing import LabelBinarizer
+# from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
-from pyimagesearch.smallervggnet import SmallerVGGNet
+# from pyimagesearch.smallervggnet import SmallerVGGNet
 import matplotlib.pyplot as plt
-from imutils import paths
+# from imutils import paths
 import numpy as np
 import argparse
 import random
-import pickle
+# import pickle
 import cv2
 import os
+
+from pycocotools.coco import COCO
+from file_management import ANNOTATION_FILE, get_downloaded_ids
+from annotations import get_image_annotations, plot_annotations
+
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -46,7 +51,9 @@ EPOCHS = 5
 INIT_LR = 1e-3   #0.001 learning_rate
 BS = 32
 IMAGE_DIMS = (640, 640, 3)
-CELL_ROW = 3
+CELL_ROW = 20
+CELL_HEIGHT = 32 #hardcode
+CELL_WIDTH = 32 #hardcode 
 CELL_COL = 20
 BOUNDING_BOX_COUNT = 1
 NUM_CLASSES = 1
@@ -74,7 +81,10 @@ print("[INFO] loading images...")
 # 	label = imagePath.split(os.path.sep)[-2]
 # 	labels.append(label)
 
-(data, labels) = get_training_data_generator(CELL_ROW,CELL_COL,BOUNDING_BOX_COUNT)
+coco = COCO(ANNOTATION_FILE)
+
+labels = all_ground_truth_numpy(coco, 1, CELL_WIDTH, CELL_HEIGHT)
+data = all_imgs_numpy()
 
 # scale the raw pixel intensities to the range [0, 1]
 # data = np.array(data, dtype="float") / 255.0
