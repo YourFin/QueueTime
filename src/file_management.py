@@ -59,5 +59,5 @@ def get_image(id):
             'The file corresponding to %d does not exist; ' % id +
             'please download it with download.download_imgs'
         )
-    # Remove alpha channel if present (i.e.)
-    return img_array[:, :, 2]
+    # Remove alpha channel if present
+    return img_array[:,:,:3]
