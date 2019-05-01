@@ -61,4 +61,7 @@ def get_image(id):
             'The file corresponding to %d does not exist; ' % id +
             'please download it with download.download_imgs'
         )
-    return img_array[:, :, :3]
+    if img_array.ndim == 3:
+        return img_array[:, :, :3]
+    else:
+        return img_array
