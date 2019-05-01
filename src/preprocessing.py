@@ -254,5 +254,5 @@ def get_training_data_generators(cell_rows, cell_columns, bounding_box_count, im
     img_array = np.divide(img_array, 256, dtype=np.float32)
 
 def is_not_greyscale(img_id):
-    img = get_img(img_id)
+    img = get_image(img_id)
     return img.ndim == 3
