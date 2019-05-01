@@ -166,8 +166,6 @@ def QueueTime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
 	
 	loss = 0
 	print("[INFO] loss init", loss)
-	xy_loss = 0
-	wh_loss = 0
 
 	indicator = y_true[...,0]
 	print("[INFO] indicator", indicator)
@@ -175,7 +173,7 @@ def QueueTime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
 	print("[INFO] x loss", x_loss)
 	y_loss = K.square(y_true[...,2] - y_pred[...,2])
 	print("[INFO] y loss", y_loss)
-	xy_loss += coord * indicator*(y_loss+x_loss)
+	xy_loss = coord * indicator*(y_loss+x_loss)
 	print("[INFO] xy_loss", xy_loss[0])
 
 	# print("[INFO] xy_loss2", K.eval(xy_loss))
@@ -183,12 +181,10 @@ def QueueTime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
 
 	w_loss = K.square(K.sqrt(y_true[...,3]) - K.sqrt(y_pred[...,3]))
 	h_loss = K.square(K.sqrt(y_true[...,4]) - K.sqrt(y_pred[...,4]))
-	wh_loss += coord * indicator*(w_loss+h_loss)
+	wh_loss = coord * indicator*(w_loss+h_loss)
 
-	pr_loss_neg = 0
-	pr_loss_pos = 0
-	pr_loss_pos += indicator * K.square(indicator - y_pred[...,0])
-	pr_loss_neg += noobj*(1-indicator) * K.square(indicator - y_pred[...,0])
+	pr_loss_pos = indicator * K.square(indicator - y_pred[...,0])
+	pr_loss_neg = noobj*(1-indicator) * K.square(indicator - y_pred[...,0])
 	
 	# K.shape(x_loss)
 
@@ -196,7 +192,7 @@ def QueueTime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
 	# print("[INFO] y_true is ", y_true, ",m is ", m, "xy_loss is", xy_loss[0])
 
 
-	loss += (xy_loss+wh_loss+pr_loss_neg+pr_loss_pos)/32
+	loss = (xy_loss+wh_loss+pr_loss_neg+pr_loss_pos)/32
 	print("[INFO] loss", loss)
 	return K.sum(K.sum(K.sum(loss,0), 0), 0, True)
 	
