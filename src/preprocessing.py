@@ -69,6 +69,7 @@ def gen_training_tensor(coco, bounding_box_count, cell_width, cell_height, img_i
     cell_y_count = ceil(PADDED_SIZE / cell_height)
     # 5 parameters to each bounding box: Probability, X pos, Y pos, Width, Height
     training_data = np.full((cell_x_count, cell_y_count, bounding_box_count * 5), DEFAULT_LOCATION)
+    training_data = training_data.astype('float32')
     # Set all object probabilities to NO_OBJECT_WEIGHT
     if DEFAULT_LOCATION != NO_OBJECT_WEIGHT:
         training_data[..., ..., 4: :5] = NO_OBJECT_WEIGHT
@@ -79,10 +80,10 @@ def gen_training_tensor(coco, bounding_box_count, cell_width, cell_height, img_i
 
         print("[DEBUG]", bounding_box)
 
-        corner_x = int(bounding_box[0])
-        corner_y = int(bounding_box[1])
-        width = int(bounding_box[2])
-        height = int(bounding_box[3])
+        corner_x = bounding_box[0]
+        corner_y = bounding_box[1]
+        width = bounding_box[2]
+        height = bounding_box[3]
 
         # Find the center of the box in terms of the whole image
         # These values are purposely floats to keep as much information as
