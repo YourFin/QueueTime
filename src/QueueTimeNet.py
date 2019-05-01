@@ -5,7 +5,7 @@
 # import the necessary packages
 import numpy as np
 import keras
-
+import tensorflow as tf
 from keras.models import Sequential
 from keras.layers.normalization import BatchNormalization
 from keras.layers.convolutional import *
