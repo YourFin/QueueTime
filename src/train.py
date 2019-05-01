@@ -7,9 +7,10 @@
 
 # # set the matplotlib backend so figures can be saved in the background
 from .preprocessing import get_training_data_generator
-import matplotlib
+from .QueueTimeNet import build, QueueTime_loss
 
 # import the necessary packages
+import matplotlib
 from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import Adam
 from keras.preprocessing.image import img_to_array
@@ -97,10 +98,10 @@ aug = ImageDataGenerator(rotation_range=25, width_shift_range=0.1,
 
 # initialize the model
 print("[INFO] compiling model...")
-model = QueueTimeNet.build(width=IMAGE_DIMS[1], height=IMAGE_DIMS[0],
+model = build(width=IMAGE_DIMS[1], height=IMAGE_DIMS[0],
 	depth=IMAGE_DIMS[2], classes=NUM_CLASSES)
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
-model.compile(loss=Queuetime_loss, optimizer=opt,
+model.compile(loss=QueueTime_loss, optimizer=opt,
 	metrics=["accuracy"]) # not sure about the metrics, decided later
 
 # train the network

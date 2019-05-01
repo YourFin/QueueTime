@@ -153,7 +153,7 @@ class QueueTimeNet:
 		# return the constructed network architecture
 		return model
 
-	def Queuetime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
+	def QueueTime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
 		# each one of them should now be batch*10*10*5
 		coord = 5
 		noobj = 0.5
