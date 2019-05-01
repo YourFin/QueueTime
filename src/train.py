@@ -101,7 +101,7 @@ print("[INFO] data matrix: {:.2f}MB".format(
 (trainX, testX, trainY, testY) = train_test_split(data,
 	labels, test_size=0.2, random_state=42)
 
-print("[INFO] the true size", labels.shape)
+print("[INFO] the true size", trainX.shape)
 
 # construct the image generator for data augmentation
 aug = ImageDataGenerator(rotation_range=25, width_shift_range=0.1,
@@ -120,7 +120,7 @@ print("[INFO] training network...")
 H = model.fit_generator(
 	aug.flow(trainX, trainY, batch_size=BS),
 	validation_data=(testX, testY),
-	steps_per_epoch=len(trainX) / BS,
+	steps_per_epoch=len(trainX) // BS,
 	epochs=EPOCHS, verbose=1)
 
 # save the model to disk
