@@ -175,7 +175,7 @@ def QueueTime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
 	print("[INFO] x loss", x_loss)
 	y_loss = K.square(y_true[...,2] - y_pred[...,2])
 	print("[INFO] y loss", y_loss)
-	xy_loss += coord * K.sum(K.sum(indicator*(y_loss+x_loss),0), 0)
+	xy_loss += coord * K.sum(K.sum(K.sum(indicator*(y_loss+x_loss),0), 0), 0, True)
 	print("[INFO] xy_loss", xy_loss)
 
 	print("[INFO] xy_loss2", K.eval(xy_loss))
