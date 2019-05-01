@@ -155,8 +155,8 @@ def QueueTime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
 	print("[INFO] ytrue", y_true)
 	print("[INFO] ypred", y_pred)
 
-	y_true = K.reshape(y_true, [32, 20, 20, 20, 5])
-	y_pred = K.reshape(y_pred, [32, 20, 20, 20, 5])
+	y_true = K.reshape(y_true, [32, 20, 20, 5])
+	y_pred = K.reshape(y_pred, [32, 20, 20, 5])
 
 	print("[INFO] ytrue", y_true)
 	print("[INFO] ypred", y_pred)
