@@ -47,7 +47,7 @@ args = vars(ap.parse_args())
 # batch size, and image dimensions
 
 DATA_SIZE = 64115
-EPOCHS = 5
+EPOCHS = 1
 INIT_LR = 1e-3   #0.001 learning_rate
 BS = 32
 IMAGE_DIMS = (640, 640, 3)
