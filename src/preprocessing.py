@@ -3,7 +3,7 @@ import numpy as np
 from math import ceil, floor
 import file_management
 from annotations import get_image_annotations
-from file_management import get_downloaded_ids
+from file_management import get_downloaded_ids, get_image
 
 PADDED_SIZE = 640
 
@@ -202,7 +202,7 @@ def image_gen_factory(image_ids, buffer_size=0):
 # Practica:
 #  This is a bit of a hack, makes a lot of assumptions
 def all_imgs_numpy():
-    img_ids = get_downloaded_ids()[:32]
+    img_ids = get_downloaded_ids()
     imgs = np.empty((len(img_ids), 640, 640, 3), np.float)
     gen = image_gen_factory(img_ids)
     for index in range(len(img_ids)):
@@ -233,7 +233,8 @@ def all_ground_truth_numpy(
         cell_height):
     #assert(cell_rows == ceil(PADDED_SIZE/cell_height))
     #assert(cell_columns == ceil(PADDED_SIZE/cell_width))
-    img_ids = get_downloaded_ids()[:32]
+    img_ids = get_downloaded_ids()
+    img_ids = list(filter(is_not_greyscale, img_ids))
     output = np.empty((len(img_ids), ceil(PADDED_SIZE/cell_height), ceil(PADDED_SIZE/cell_width), bounding_box_count * 5), np.float)
     gen = ground_truth_factory(coco, bounding_box_count, cell_width, cell_height, img_ids)
     for index in range(len(img_ids)):
@@ -251,3 +252,7 @@ def get_training_data_generators(cell_rows, cell_columns, bounding_box_count, im
 
     # Compress to 0 to 1
     img_array = np.divide(img_array, 256, dtype=np.float32)
+
+def is_not_greyscale(img_id):
+    img = get_image(img_id)
+    return img.ndim == 3

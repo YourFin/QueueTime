@@ -50,6 +50,7 @@ def get_downloaded_ids():
 # Preconditions:
 #  A picture with the given id exists
 #  The picture DOES NOT have an alpha channel
+#  The picture is NOT greyscale
 # Postconditions:
 #  Trivial
 def get_image(id):
@@ -60,5 +61,4 @@ def get_image(id):
             'The file corresponding to %d does not exist; ' % id +
             'please download it with download.download_imgs'
         )
-    # Remove alpha channel if present
-    return img_array
+    return img_array[:, :, :3]
