@@ -47,7 +47,7 @@ args = vars(ap.parse_args())
 # batch size, and image dimensions
 
 DATA_SIZE = 64115
-EPOCHS = 5     
+EPOCHS = 5
 INIT_LR = 1e-3   #0.001 learning_rate
 BS = 32
 IMAGE_DIMS = (640, 640, 3)
@@ -75,7 +75,7 @@ print("[INFO] loading images...")
 # 	image = cv2.resize(image, (IMAGE_DIMS[1], IMAGE_DIMS[0]))
 # 	image = img_to_array(image)
 # 	data.append(image)
- 
+
 # 	# extract the class label from the image path and update the
 # 	# labels list
 # 	label = imagePath.split(os.path.sep)[-2]
