@@ -6,8 +6,8 @@
 # python train.py --dataset dataset --model pokedex.model --labelbin lb.pickle
 
 # # set the matplotlib backend so figures can be saved in the background
-from .preprocessing import all_imgs_numpy, all_ground_truth_numpy
-from .QueueTimeNet import build, QueueTime_loss
+from preprocessing import all_imgs_numpy, all_ground_truth_numpy
+from QueueTimeNet import build, QueueTime_loss
 
 # import the necessary packages
 import matplotlib
