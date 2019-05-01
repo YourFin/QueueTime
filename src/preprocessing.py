@@ -89,8 +89,10 @@ def gen_training_tensor(coco, bounding_box_count, cell_width, cell_height, img_i
 
     annotations = get_image_annotations(coco, img_id)
 
-    cell_x_count = ceil(img.shape[0] / cell_width)
-    cell_y_count = ceil(img.shape[1] / cell_height)
+    img = coco.loadImgs([img_id])
+
+    cell_x_count = ceil(img['width'] / cell_width)
+    cell_y_count = ceil(img['height'] / cell_height)
     # 5 parameters to each bounding box: Probability, X pos, Y pos, Width, Height
     training_data = np.full((cell_x_count, cell_y_count, bounding_box_count * 5), DEFAULT_LOCATION)
     # Set all object probabilities to NO_OBJECT_WEIGHT
@@ -251,7 +253,7 @@ def all_ground_truth_numpy(
         cell_width,
         cell_height):
     img_ids = get_downloaded_ids()
-    output = np.empty((len(img_ids), int(640/cell_height), int(640/cell_width), bounding_box_count * 5), np.float)
+    output = np.empty((len(img_ids), ceil(640/cell_height), ceil(640/cell_width), bounding_box_count * 5), np.float)
     gen = ground_truth_factory(coco, bounding_box_count, cell_width, cell_height, img_ids)
     for index in range(len(img_ids)):
         output[index, :, :, :] = next(gen)
