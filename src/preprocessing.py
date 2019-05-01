@@ -3,6 +3,7 @@ import numpy as np
 from math import ceil
 import file_management
 from annotations import get_image_annotations
+from file_management import get_downloaded_ids
 
 # Procedure:
 #  pad_image
@@ -204,6 +205,58 @@ def image_gen_factory(image_ids, buffer_size=0):
         image = file_management.get_image(id)
         image = np.divide(image, 256, dtype=np.float32)
         yield image
+
+# Procedure:
+#  all_imgs_numpy
+# Purpose:
+#  To return all images as a numpy array
+# Parameters:
+#  None
+# Produces:
+#  imgs: numpy(float) - first dim is image number, then row,column,color channel
+# Precondations:
+#  some images are download
+# Postconditions:
+#  out contains every image in data/coco
+# Practica:
+#  This is a bit of a hack, makes a lot of assumptions
+def all_imgs_numpy():
+    img_ids = get_downloaded_ids()
+    imgs = np.empty((size(img_ids), 640, 640, 3), np.float)
+    gen = image_gen_factory(img_ids)
+    for index in range(size(img_ids)):
+        imgs[index, :, :, :] = next(gen)
+
+    return imgs
+
+# Procedure:
+#  all_ground_truth_numpy
+# Purpose:
+#  Return all training data corresponding to downloaded images
+# Parameters:
+#  coco: COCO - a coco instance to pull annotation information from
+#  bounding_box_count: int - number of bounding boxes per cell; known as B in YOLO paper
+#    NOTE: Dead paramater for now - only works with one
+#  cell_width: int - the width in pixels of a cell in the image.
+#  cell_height: int - the height in pixels of a cell in the image.
+# Produces:
+#  output: numpy array of floats
+# Preconditions:
+#  no additional
+# Postconditions:
+#  all images defined on disk correspond to images defined here
+def all_ground_truth_numpy(
+        coco,
+        bounding_box_count,
+        cell_width,
+        cell_height,
+        image_ids):
+    img_ids = get_downloaded_ids()
+    output = np.empty((size(img_ids, 640 / cell_height, 640 / cell_width, bounding_box_count * 5)))
+    gen = ground_truth_factory(coco, bounding_box_count, cell_width, cell_height, img_ids)
+    for index in range(size(img_ids)):
+        output[index, :, :, :] = next(gen)
+    return output
 
 # Returns a generator of tuples: (img, training tensor)
 # Normalize the image matrix (set all the value in the range
