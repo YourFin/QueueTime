@@ -222,9 +222,9 @@ def image_gen_factory(image_ids, buffer_size=0):
 #  This is a bit of a hack, makes a lot of assumptions
 def all_imgs_numpy():
     img_ids = get_downloaded_ids()
-    imgs = np.empty((size(img_ids), 640, 640, 3), np.float)
+    imgs = np.empty((len(img_ids), 640, 640, 3), np.float)
     gen = image_gen_factory(img_ids)
-    for index in range(size(img_ids)):
+    for index in range(len(img_ids)):
         imgs[index, :, :, :] = next(gen)
 
     return imgs
@@ -252,9 +252,9 @@ def all_ground_truth_numpy(
         cell_height,
         image_ids):
     img_ids = get_downloaded_ids()
-    output = np.empty((size(img_ids, 640 / cell_height, 640 / cell_width, bounding_box_count * 5)))
+    output = np.empty((len(img_ids), 640 / cell_height, 640 / cell_width, bounding_box_count * 5), np.float)
     gen = ground_truth_factory(coco, bounding_box_count, cell_width, cell_height, img_ids)
-    for index in range(size(img_ids)):
+    for index in range(len(img_ids)):
         output[index, :, :, :] = next(gen)
     return output
 
