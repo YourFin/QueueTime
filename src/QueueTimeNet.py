@@ -26,7 +26,7 @@ def build(width, height, depth, classes):
 	chanDim = -1
 
 	# Conv. Layer 7x7x64-s-2
-	model.add(Conv2D(64, (7, 7), stride = 2, padding="same",
+	model.add(Conv2D(64, (7, 7), strides = 2, padding="same",
 		input_shape=inputShape))
 	model.add(BatchNormalization(axis=chanDim)) #order matters?
 	model.add(LeakyReLU(alpha=0.1)) #order matters?
@@ -120,7 +120,7 @@ def build(width, height, depth, classes):
 	model.add(BatchNormalization(axis=chanDim))
 	model.add(LeakyReLU(alpha=0.1))
 
-	model.add(Conv2D(1024, (3, 3), stride = 2, padding="valid"))
+	model.add(Conv2D(1024, (3, 3), strides = 2, padding="valid"))
 	model.add(BatchNormalization(axis=chanDim))
 	model.add(LeakyReLU(alpha=0.1))
 

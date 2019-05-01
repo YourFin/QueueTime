@@ -52,8 +52,6 @@ INIT_LR = 1e-3   #0.001 learning_rate
 BS = 32
 IMAGE_DIMS = (640, 640, 3)
 CELL_ROW = 20
-CELL_HEIGHT = 32 #hardcode
-CELL_WIDTH = 32 #hardcode 
 CELL_COL = 20
 BOUNDING_BOX_COUNT = 1
 NUM_CLASSES = 1
@@ -145,4 +143,4 @@ plt.title("Training Loss and Accuracy")
 plt.xlabel("Epoch #")
 plt.ylabel("Loss/Accuracy")
 plt.legend(loc="upper left")
-plt.savefig(args["plot"])
+# plt.savefig(args["plot"])
