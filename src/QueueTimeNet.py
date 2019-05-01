@@ -100,29 +100,29 @@ def build(width, height, depth, classes):
 	model.add(MaxPooling2D(pool_size=(2, 2)))
 
 	# Conv. Layer * 2*2 + 2
-	model.add(Conv2D(512, (1, 1), padding="same"))
-	model.add(BatchNormalization(axis=chanDim))
-	model.add(LeakyReLU(alpha=0.1))
+	# model.add(Conv2D(512, (1, 1), padding="same"))
+	# model.add(BatchNormalization(axis=chanDim))
+	# model.add(LeakyReLU(alpha=0.1))
 
-	model.add(Conv2D(1024, (3, 3), padding="same"))
-	model.add(BatchNormalization(axis=chanDim))
-	model.add(LeakyReLU(alpha=0.1))
+	# model.add(Conv2D(1024, (3, 3), padding="same"))
+	# model.add(BatchNormalization(axis=chanDim))
+	# model.add(LeakyReLU(alpha=0.1))
 
-	model.add(Conv2D(512, (1, 1), padding="same"))
-	model.add(BatchNormalization(axis=chanDim))
-	model.add(LeakyReLU(alpha=0.1))
+	# model.add(Conv2D(512, (1, 1), padding="same"))
+	# model.add(BatchNormalization(axis=chanDim))
+	# model.add(LeakyReLU(alpha=0.1))
 
-	model.add(Conv2D(1024, (3, 3), padding="same"))
-	model.add(BatchNormalization(axis=chanDim))
-	model.add(LeakyReLU(alpha=0.1))
+	# model.add(Conv2D(1024, (3, 3), padding="same"))
+	# model.add(BatchNormalization(axis=chanDim))
+	# model.add(LeakyReLU(alpha=0.1))
 
-	model.add(Conv2D(1024, (3, 3), padding="same"))
-	model.add(BatchNormalization(axis=chanDim))
-	model.add(LeakyReLU(alpha=0.1))
+	# model.add(Conv2D(1024, (3, 3), padding="same"))
+	# model.add(BatchNormalization(axis=chanDim))
+	# model.add(LeakyReLU(alpha=0.1))
 
-	model.add(Conv2D(1024, (3, 3), strides = 2, padding="valid"))
-	model.add(BatchNormalization(axis=chanDim))
-	model.add(LeakyReLU(alpha=0.1))
+	# model.add(Conv2D(1024, (3, 3), strides = 2, padding="valid"))
+	# model.add(BatchNormalization(axis=chanDim))
+	# model.add(LeakyReLU(alpha=0.1))
 
 	# Conv. Layer * 2
 	model.add(Conv2D(1024, (3, 3), padding="same"))
@@ -152,6 +152,12 @@ def build(width, height, depth, classes):
 
 def QueueTime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
 	# each one of them should now be batch*10*10*5
+	print("[INFO] ytrue", y_true)
+	print("[INFO] ypred", y_pred)
+
+	y_true = K.reshape(y_true, [32, 20, 20, 20, 5])
+	y_pred = K.reshape(y_pred, [32, 20, 20, 20, 5])
+
 	coord = 5
 	noobj = 0.5
 	indicator = y_true[:,0,...]
@@ -169,7 +175,6 @@ def QueueTime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
 	y_true = K.print_tensor(y_true, message='y_true = ')
 	y_pred = K.print_tensor(y_pred, message='y_pred = ')
 
-	# tf.print(xy_loss)
 	# K.shape(x_loss)
 
 	# m = K.int_shape(y_true)
