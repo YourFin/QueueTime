@@ -164,10 +164,13 @@ def QueueTime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
 	coord = 5
 	noobj = 0.5
 	indicator = y_true[:,0,...]
+	print("[INFO] indicator", indicator)
 	x_loss = K.square(y_true[:,1,...] - y_pred[:,1,...])
+	print("[INFO] get here", indicator)
 	y_loss = K.square(y_true[:,2,...] - y_pred[:,2,...])
+	print("[INFO] get here2", indicator)
 	xy_loss = coord * K.sum(indicator*(y_loss+x_loss), None)
-
+	print("[INFO] xy_loss", xy_loss)
 	w_loss = K.square(K.sqrt(y_true[:,3,...]) - K.sqrt(y_pred[:,3,...]))
 	h_loss = K.square(K.sqrt(y_true[:,4,...]) - K.sqrt(y_pred[:,4,...]))
 	wh_loss = coord * K.sum(indicator*(w_loss+h_loss),None)
@@ -181,8 +184,9 @@ def QueueTime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
 	# print("[INFO] y_true is ", y_true, ",m is ", m, "xy_loss is", xy_loss[0])
 
 
-	# loss = (xy_loss+wh_loss+pr_loss_neg+pr_loss_pos)/32
-	return 0
+	loss = (xy_loss+wh_loss+pr_loss_neg+pr_loss_pos)/32
+	print("[INFO] loss", loss)
+	return loss
 	
 	
 	
