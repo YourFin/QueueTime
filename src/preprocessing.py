@@ -202,7 +202,7 @@ def image_gen_factory(image_ids, buffer_size=0):
 # Practica:
 #  This is a bit of a hack, makes a lot of assumptions
 def all_imgs_numpy():
-    img_ids = get_downloaded_ids()
+    img_ids = get_downloaded_ids()[:32]
     imgs = np.empty((len(img_ids), 640, 640, 3), np.float)
     gen = image_gen_factory(img_ids)
     for index in range(len(img_ids)):
@@ -233,7 +233,7 @@ def all_ground_truth_numpy(
         cell_height):
     #assert(cell_rows == ceil(PADDED_SIZE/cell_height))
     #assert(cell_columns == ceil(PADDED_SIZE/cell_width))
-    img_ids = get_downloaded_ids()
+    img_ids = get_downloaded_ids()[:32]
     output = np.empty((len(img_ids), ceil(PADDED_SIZE/cell_height), ceil(PADDED_SIZE/cell_width), bounding_box_count * 5), np.float)
     gen = ground_truth_factory(coco, bounding_box_count, cell_width, cell_height, img_ids)
     for index in range(len(img_ids)):
