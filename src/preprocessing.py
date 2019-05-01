@@ -55,11 +55,11 @@ def gen_training_tensor(coco, bounding_box_count, cell_width, cell_height, img_i
 
     # Position of the various training parameters along the last dimension
     # of the output data from the neural network
-    POS_BOX_CENTER_X = 0
-    POS_BOX_CENTER_Y = 1
-    POS_BOX_WIDTH = 2
-    POS_BOX_HEIGHT = 3
-    POS_OBJ_LIKELYHOOD = 4
+    POS_BOX_CENTER_X = 1
+    POS_BOX_CENTER_Y = 2
+    POS_BOX_WIDTH = 3
+    POS_BOX_HEIGHT = 4
+    POS_OBJ_LIKELYHOOD = 0
 
     annotations = get_image_annotations(coco, img_id)
 
@@ -76,6 +76,9 @@ def gen_training_tensor(coco, bounding_box_count, cell_width, cell_height, img_i
     for annotation in annotations:
         # Calculate the cell that the annotation should match
         bounding_box = annotation['bbox']
+
+        logging.warn("[DEBUG]", bounding_box)
+
         corner_x = int(bounding_box[0])
         corner_y = int(bounding_box[1])
         width = int(bounding_box[2])
@@ -104,7 +107,7 @@ def gen_training_tensor(coco, bounding_box_count, cell_width, cell_height, img_i
         rel_height = height / cell_height
 
         # TODO: Move to handling more than one bounding box
-        if training_data[cell_x_pos, cell_y_pos, 4] != NO_OBJECT_WEIGHT:
+        if training_data[cell_x_pos, cell_y_pos, POS_OBJ_LIKELYHOOD] != NO_OBJECT_WEIGHT:
             logging.warn("Image %d has multiple bounding boxes in cell (%d,%d)" % (
                 img_id,
                 cell_x_pos,
@@ -117,7 +120,7 @@ def gen_training_tensor(coco, bounding_box_count, cell_width, cell_height, img_i
         training_data[cell_x_pos, cell_y_pos, POS_BOX_WIDTH] = rel_width
         training_data[cell_x_pos, cell_y_pos, POS_BOX_HEIGHT] = rel_height
         training_data[cell_x_pos, cell_y_pos, POS_OBJ_LIKELYHOOD] = HAS_OBJECT_WEIGHT
-
+        logging.warn("[DEBUG]", training_data(cell_x_pos, cell_y_pos, :))
     return training_data
 
 # Procedure:
