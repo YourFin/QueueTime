@@ -52,11 +52,6 @@ INIT_LR = 1e-3   #0.001 learning_rate
 BS = 32
 IMAGE_DIMS = (640, 640, 3)
 CELL_ROW = 20
-<<<<<<< HEAD
-=======
-CELL_HEIGHT = 32 #hardcode
-CELL_WIDTH = 32 #hardcode
->>>>>>> 384ab11b21cac8c6bb67e45929f3a4113d5e54c5
 CELL_COL = 20
 BOUNDING_BOX_COUNT = 1
 NUM_CLASSES = 1
