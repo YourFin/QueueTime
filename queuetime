@@ -1,1 +1,9 @@
-src/main.py
+#!/bin/bash
+# Move to script directory
+function finish {
+    popd >/dev/null
+}
+pushd "$(dirname "$0")" >/dev/null || exit 1
+trap finish EXIT
+
+python -i ./src/main.py
