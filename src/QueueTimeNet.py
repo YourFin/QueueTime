@@ -169,7 +169,7 @@ class QueueTimeNet:
 		pr_loss_pos = K.sum(indicator * K.square(indicator - y_pred[:,0,...]))
 		pr_loss_neg = noobj*K.sum((1-indicator) * K.square(indicator - y_pred[:,0,...]))
 
-		return (xy_loss+wh_loss+pr_loss_neg+pr_loss_pos)/K.int_shape(y_true)[0]
+		return (xy_loss+wh_loss+pr_loss_neg+pr_loss_pos)/(K.int_shape(y_true)[0])
 		
 		
 		
