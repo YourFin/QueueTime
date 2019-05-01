@@ -120,7 +120,7 @@ def gen_training_tensor(coco, bounding_box_count, cell_width, cell_height, img_i
         training_data[cell_x_pos, cell_y_pos, POS_BOX_WIDTH] = rel_width
         training_data[cell_x_pos, cell_y_pos, POS_BOX_HEIGHT] = rel_height
         training_data[cell_x_pos, cell_y_pos, POS_OBJ_LIKELYHOOD] = HAS_OBJECT_WEIGHT
-        logging.warn("[DEBUG]", training_data(cell_x_pos, cell_y_pos, :))
+        logging.warn("[DEBUG]", training_data[cell_x_pos, cell_y_pos, :])
     return training_data
 
 # Procedure:
