@@ -128,11 +128,11 @@ class QueueTimeNet:
 		model.add(LeakyReLU(alpha=0.1))
 
 		# Conv. Layer * 2
-		model.add(Conv2D(1024, (3, 3), padding="same")
+		model.add(Conv2D(1024, (3, 3), padding="same"))
 		model.add(BatchNormalization(axis=chanDim))
 		model.add(LeakyReLU(alpha=0.1))
 
-		model.add(Conv2D(1024, (3, 3), padding="same")
+		model.add(Conv2D(1024, (3, 3), padding="same"))
 		model.add(BatchNormalization(axis=chanDim))
 		model.add(LeakyReLU(alpha=0.1))
 
@@ -143,7 +143,7 @@ class QueueTimeNet:
 
         #z said to use conv layer instead of fc layer, blame her if this is wrong
 		model.add(Dropout(0.5))
-		model.add(Conv2D(5, (3, 3), padding="same")
+		model.add(Conv2D(5, (3, 3), padding="same"))
 		model.add(Activation("relu"))
 		# model.add(BatchNormalization())
 
