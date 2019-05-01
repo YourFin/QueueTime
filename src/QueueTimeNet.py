@@ -168,6 +168,9 @@ def QueueTime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
 	
 	m = K.int_shape(y_true)
 	print("[INFO] y_true is ", y_true, ",m is ", m, "xy_loss is", xy_loss[0])
+
+	loss = tf.Print(xy_loss)
+
 	loss = (xy_loss+wh_loss+pr_loss_neg+pr_loss_pos)/32
 	return loss
 	
