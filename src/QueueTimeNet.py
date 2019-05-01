@@ -184,8 +184,8 @@ def QueueTime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
 
 	pr_loss_neg = 0
 	pr_loss_pos = 0
-	pr_loss_pos += np.sum(indicator * K.square(indicator - y_pred[...,0]).eval())
-	pr_loss_neg += noobj*np.sum((1-indicator) * K.square(indicator - y_pred[...,0]).eval())
+	pr_loss_pos += K.sum(indicator * K.square(indicator - y_pred[...,0])))
+	pr_loss_neg += noobj*K.sum((1-indicator) * K.square(indicator - y_pred[...,0]))
 	
 	# K.shape(x_loss)
 
