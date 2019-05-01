@@ -175,8 +175,8 @@ def QueueTime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
 	h_loss = K.square(K.sqrt(y_true[...,4]) - K.sqrt(y_pred[...,4]))
 	wh_loss = coord * K.sum(indicator*(w_loss+h_loss),None)
 
-	pr_loss_pos = K.sum(indicator * K.square(indicator - y_pred[:,0,...]))
-	pr_loss_neg = noobj*K.sum((1-indicator) * K.square(indicator - y_pred[:,0,...]))
+	pr_loss_pos = K.sum(indicator * K.square(indicator - y_pred[...,0]))
+	pr_loss_neg = noobj*K.sum((1-indicator) * K.square(indicator - y_pred[...,0]))
 	
 	# K.shape(x_loss)
 
