@@ -1,9 +1,11 @@
 import logging
 import numpy as np
-from math import ceil
+from math import ceil, floor
 import file_management
 from annotations import get_image_annotations
 from file_management import get_downloaded_ids
+
+PADDED_SIZE = 640
 
 # Procedure:
 #  pad_image
@@ -17,40 +19,12 @@ from file_management import get_downloaded_ids
 #  No additional
 # Postconditions:
 #  dim_size(output, 0) == dim_size(output, 1)
-def pad_image(img):
+def pad_image(img, size):
     (X_size, Y_size, _) = img.shape
-    if X_size > Y_size:
-        dif = X_size - Y_size
-        return np.pad(img, ((0,0),(0,dif),(0,0)), 'constant')  # Default to 0
-    elif X_size == Y_size:
-        return img
-    else:
-        dif = Y_size - X_size
-        return np.pad(img, ((0,dif),(0,0),(0,0)), 'constant')  # Default to 0
+    #X_size = img.shape[0]
+    #Y_size = img.shape[1]
 
-# Procedure:
-#  pad_mask
-# Purpose:
-#  To pad an mask in pre-processing to a square aspect ratio
-# Parameters:
-#  mask: numpy[int][int] - A numpy array representing a 2d mask
-# Produces:
-#  output: numpy[int][int] - A numpy array representing a 2d mask
-# Preconditions:
-#  No additional
-# Postconditions:
-#  dim_size(output, 0) == dim_size(output, 1)
-def pad_image(mask):
-    (X_size, Y_size) = mask.shape
-    if X_size > Y_size:
-        dif = X_size - Y_size
-        return np.pad(mask, ((0,0),(0,dif)), 'constant')  # Default to 0
-    elif X_size == Y_size:
-        return mask
-    else:
-        dif = Y_size - X_size
-        return np.pad(mask, ((0,dif),(0,0)), 'constant')  # Default to 0
-
+    return np.pad(img, ((0, size - X_size),(0, size - Y_size), (0, 0)), 'constant')  # Default to 0
 
 # Procedure:
 #  gen_training_tensor
@@ -89,8 +63,10 @@ def gen_training_tensor(coco, bounding_box_count, cell_width, cell_height, img_i
 
     annotations = get_image_annotations(coco, img_id)
 
-    cell_x_count = ceil(img.shape[0] / cell_width)
-    cell_y_count = ceil(img.shape[1] / cell_height)
+    img = coco.loadImgs([img_id])[0]
+
+    cell_x_count = ceil(PADDED_SIZE / cell_width)
+    cell_y_count = ceil(PADDED_SIZE / cell_height)
     # 5 parameters to each bounding box: Probability, X pos, Y pos, Width, Height
     training_data = np.full((cell_x_count, cell_y_count, bounding_box_count * 5), DEFAULT_LOCATION)
     # Set all object probabilities to NO_OBJECT_WEIGHT
@@ -204,6 +180,11 @@ def image_gen_factory(image_ids, buffer_size=0):
     for id in image_ids:
         image = file_management.get_image(id)
         image = np.divide(image, 256, dtype=np.float32)
+        try:
+            image = pad_image(image, PADDED_SIZE)
+        except Exception as e:
+            print(id)
+            raise e
         yield image
 
 # Procedure:
@@ -221,10 +202,10 @@ def image_gen_factory(image_ids, buffer_size=0):
 # Practica:
 #  This is a bit of a hack, makes a lot of assumptions
 def all_imgs_numpy():
-    img_ids = get_downloaded_ids()
-    imgs = np.empty((size(img_ids), 640, 640, 3), np.float)
+    img_ids = get_downloaded_ids()[:32]
+    imgs = np.empty((len(img_ids), 640, 640, 3), np.float)
     gen = image_gen_factory(img_ids)
-    for index in range(size(img_ids)):
+    for index in range(len(img_ids)):
         imgs[index, :, :, :] = next(gen)
 
     return imgs
@@ -250,10 +231,12 @@ def all_ground_truth_numpy(
         bounding_box_count,
         cell_width,
         cell_height):
-    img_ids = get_downloaded_ids()
-    output = np.empty((size(img_ids, 640 / cell_height, 640 / cell_width, bounding_box_count * 5)))
+    #assert(cell_rows == ceil(PADDED_SIZE/cell_height))
+    #assert(cell_columns == ceil(PADDED_SIZE/cell_width))
+    img_ids = get_downloaded_ids()[:32]
+    output = np.empty((len(img_ids), ceil(PADDED_SIZE/cell_height), ceil(PADDED_SIZE/cell_width), bounding_box_count * 5), np.float)
     gen = ground_truth_factory(coco, bounding_box_count, cell_width, cell_height, img_ids)
-    for index in range(size(img_ids)):
+    for index in range(len(img_ids)):
         output[index, :, :, :] = next(gen)
     return output
 
