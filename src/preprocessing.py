@@ -20,11 +20,7 @@ PADDED_SIZE = 640
 # Postconditions:
 #  dim_size(output, 0) == dim_size(output, 1)
 def pad_image(img, size):
-    try:
-        (X_size, Y_size, _) = img.shape
-    except Exception as e:
-        print(img)
-        raise e
+    (X_size, Y_size, _) = img.shape
     #X_size = img.shape[0]
     #Y_size = img.shape[1]
 
@@ -184,7 +180,11 @@ def image_gen_factory(image_ids, buffer_size=0):
     for id in image_ids:
         image = file_management.get_image(id)
         image = np.divide(image, 256, dtype=np.float32)
-        image = pad_image(image, PADDED_SIZE)
+        try:
+            image = pad_image(image, PADDED_SIZE)
+        except Exception as e:
+            print(id)
+            raise e
         yield image
 
 # Procedure:
