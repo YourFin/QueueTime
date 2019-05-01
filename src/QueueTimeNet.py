@@ -47,8 +47,7 @@ class QueueTimeNet:
 		model.add(BatchNormalization(axis=chanDim))
 		model.add(LeakyReLU(alpha=0.1))
 
-		model.add(Conv2D(256, (3, 3), padding="same",)
-			input_shape=inputShape))
+		model.add(Conv2D(256, (3, 3), padding="same"))
 		model.add(BatchNormalization(axis=chanDim))
 		model.add(LeakyReLU(alpha=0.1))
 
@@ -155,7 +154,22 @@ class QueueTimeNet:
 		return model
 
 	def Queuetime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
-		coord = 5;
-		noobj = 0.5;
+		# each one of them should now be batch*10*10*5
+		coord = 5
+		noobj = 0.5
+		indicator = y_true[:,0,...]
+		x_loss = K.square(y_true[:,1,...] - y_pred[:,1,...])
+		y_loss = K.square(y_true[:,2,...] - y_pred[:,2,...])
+		xy_loss = coord * K.sum(indicator*(y_loss+x_loss))
+
+		w_loss = K.square(K.sqrt(y_true[:,3,...]) - K.sqrt(y_pred[:,3,...]))
+		h_loss = K.square(K.sqrt(y_true[:,4,...]) - K.sqrt(y_pred[:,4,...]))
+		wh_loss = coord * K.sum(indicator*(w_loss+h_loss))
+
+		pr_loss_pos = K.sum(indicator * K.square(indicator - y_pred[:,0,...]))
+		pr_loss_neg = noobj*K.sum((1-indicator) * K.square(indicator - y_pred[:,0,...]))
+
+		return (xy_loss+wh_loss+pr_loss_neg+pr_loss_pos)/K.int_shape(y_true)[0]
+		
 		
 		
