@@ -77,7 +77,7 @@ def gen_training_tensor(coco, bounding_box_count, cell_width, cell_height, img_i
         # Calculate the cell that the annotation should match
         bounding_box = annotation['bbox']
 
-        logging.warn("[DEBUG]", bounding_box)
+        print("[DEBUG]", bounding_box)
 
         corner_x = int(bounding_box[0])
         corner_y = int(bounding_box[1])
@@ -120,7 +120,7 @@ def gen_training_tensor(coco, bounding_box_count, cell_width, cell_height, img_i
         training_data[cell_x_pos, cell_y_pos, POS_BOX_WIDTH] = rel_width
         training_data[cell_x_pos, cell_y_pos, POS_BOX_HEIGHT] = rel_height
         training_data[cell_x_pos, cell_y_pos, POS_OBJ_LIKELYHOOD] = HAS_OBJECT_WEIGHT
-        logging.warn("[DEBUG]", training_data[cell_x_pos, cell_y_pos, :])
+        print("[DEBUG]", training_data[cell_x_pos, cell_y_pos, :])
     return training_data
 
 # Procedure:
