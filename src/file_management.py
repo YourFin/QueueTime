@@ -49,6 +49,7 @@ def get_downloaded_ids():
 #  img: numpy[int][int][int] - the image in the file
 # Preconditions:
 #  A picture with the given id exists
+#  The picture DOES NOT have an alpha channel
 # Postconditions:
 #  Trivial
 def get_image(id):
@@ -60,4 +61,4 @@ def get_image(id):
             'please download it with download.download_imgs'
         )
     # Remove alpha channel if present
-    return img_array[:,:,:3]
+    return img_array
