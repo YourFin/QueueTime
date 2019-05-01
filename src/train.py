@@ -53,7 +53,7 @@ BS = 32
 IMAGE_DIMS = (640, 640, 3)
 CELL_ROW = 20
 CELL_HEIGHT = 32 #hardcode
-CELL_WIDTH = 32 #hardcode 
+CELL_WIDTH = 32 #hardcode
 CELL_COL = 20
 BOUNDING_BOX_COUNT = 1
 NUM_CLASSES = 1
@@ -83,7 +83,7 @@ print("[INFO] loading images...")
 
 coco = COCO(ANNOTATION_FILE)
 
-labels = all_ground_truth_numpy(coco, 1, CELL_WIDTH, CELL_HEIGHT)
+labels = all_ground_truth_numpy(coco, 1, CELL_ROW, CELL_COLUMN)
 data = all_imgs_numpy()
 
 # scale the raw pixel intensities to the range [0, 1]
