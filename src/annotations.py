@@ -19,6 +19,15 @@ from math import floor
 #  img_id has been downloaded
 # Postconditions:
 #  The image corresponding to $img_id is displayed with $annotations in $color
+#  If the 'color' key exist in anns, that is used as the color instead of
+#   $color
+# Practica:
+#  As an example of coloring by likelyhood:
+#  # Assume $output is the output of the NN
+#  anns = annotations_from_output(output)
+#  for ann in anns:
+#    ann['color'] = plt.cm.jet(ann['likelyhood'])
+#  plot_annotations(img_id, anns)
 def plot_annotations(img_id, annotations, color='r'):
     img = get_image(img_id)
     fig, ax = plt.subplots()
@@ -29,7 +38,7 @@ def plot_annotations(img_id, annotations, color='r'):
             ann['bbox'][2],
             ann['bbox'][3],
             linewidth=2,
-            edgecolor='r',
+            edgecolor=ann.get('color', color),
             facecolor='none'
         )
         ax.add_patch(rect_patch)
