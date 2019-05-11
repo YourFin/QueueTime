@@ -48,7 +48,7 @@ proba = model.predict(image)[0]
 anns = cnn_y_to_absolute(CELL_WIDTH, CELL_HEIGHT, proba)
 
 # filter out all scores below threshold:
-anns = list(filter(lambda ann: ann['score'] > 0.001, anns))
+# anns = list(filter(lambda ann: ann['score'] > 0.001, anns))
 
 # Add color key:
 for ann in anns:
