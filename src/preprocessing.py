@@ -63,13 +63,10 @@ def gen_training_tensor(coco, bounding_box_count, cell_width, cell_height, img_i
 
     annotations = get_image_annotations(coco, img_id)
 
-    img = coco.loadImgs([img_id])[0]
-
     cell_x_count = ceil(PADDED_SIZE / cell_width)
     cell_y_count = ceil(PADDED_SIZE / cell_height)
     # 5 parameters to each bounding box: Probability, X pos, Y pos, Width, Height
-    training_data = np.full((cell_x_count, cell_y_count, bounding_box_count * 5), DEFAULT_LOCATION)
-    training_data = training_data.astype('float32')
+    training_data = np.full((cell_x_count, cell_y_count, bounding_box_count * 5), DEFAULT_LOCATION, dtype=np.float)
     # Set all object probabilities to NO_OBJECT_WEIGHT
     if DEFAULT_LOCATION != NO_OBJECT_WEIGHT:
         training_data[..., ..., 4: :5] = NO_OBJECT_WEIGHT
