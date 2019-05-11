@@ -7,39 +7,42 @@
 
 # import the necessary packages
 from keras.models import load_model
-import numpy as np
 import argparse
 from file_management import get_image
 from annotations import cnn_y_to_absolute, plot_annotations
 from QueueTimeNet import QueueTime_loss
 from keras.utils.generic_utils import get_custom_objects
+from preprocessing import pad_image, PADDED_SIZE
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-m", "--model", required=True,
-	help="path to trained model model")
+                help="path to trained model model")
 # ap.add_argument("-l", "--labelbin", required=True,
 # 	help="path to label binarizer")
 ap.add_argument("-i", "--image", required=True,
-	            help="input image id", type=int)
+                help="input image id", type=int)
 args = vars(ap.parse_args())
 
 img_id = args["image"]
 
-image = get_image(img_id)
+image = pad_image(get_image(img_id), PADDED_SIZE)
 #image = np.expand_dims(image, axis=0) #?
 
 # load the trained convolutional neural network and the label
 # binarizer
 print("[INFO] loading network...")
+# Load in the custom loss function
+get_custom_objects().update({"QueueTime_loss": QueueTime_loss})
+
 model = load_model(args["model"])
-get_custom_objects.update({"QueueTime_loss": QueueTime_loss})
 # lb = pickle.loads(open(args["labelbin"], "rb").read())
 
 # classify the input image
 print("[INFO] classifying image...")
 proba = model.predict(image)
 anns = cnn_y_to_absolute(proba)
+
 plot_annotations(img_id, anns)
 
 
