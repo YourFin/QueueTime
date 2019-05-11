@@ -259,22 +259,23 @@ def training_data_generator(
         cell_height_px):
     img_ids = get_downloaded_ids()
     img_ids = list(filter(is_not_greyscale, img_ids))[:num_images]
-    for img_id in img_ids:
-        image = file_management.get_image(img_id)
-        image = np.divide(image, 256, dtype=np.float32)
-        try:
-            image = pad_image(image, PADDED_SIZE)
-        except Exception as e:
-            print(id)
-            raise e
-        ground_truth = get_y_true(
-            coco,
-            bounding_box_count,
-            cell_width_px,
-            cell_height_px,
-            img_id
-        )
-        yield (np.expand_dims(image, axis=0), np.expand_dims(ground_truth, axis=0))
+    while 1:
+        for img_id in img_ids:
+            image = file_management.get_image(img_id)
+            image = np.divide(image, 256, dtype=np.float32)
+            try:
+                image = pad_image(image, PADDED_SIZE)
+            except Exception as e:
+                print(id)
+                raise e
+            ground_truth = get_y_true(
+                coco,
+                bounding_box_count,
+                cell_width_px,
+                cell_height_px,
+                img_id
+            )
+            yield (np.expand_dims(image, axis=0), np.expand_dims(ground_truth, axis=0))
 
 
 
