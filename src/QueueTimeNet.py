@@ -17,6 +17,7 @@ from keras.layers import LeakyReLU
 from keras.preprocessing.image import ImageDataGenerator
 
 from keras import backend as K
+from annotations import cnn_y_to_absolute
 
 def build(width, height, depth, classes):
 	# initialize the model along with the input shape to be
@@ -193,5 +194,53 @@ def QueueTime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
 	print("[INFO] loss", loss)
 	return K.sum(K.sum(K.sum(loss,0), 0), 0, True)
 	
+
+# get rid of the duplicates using non-max suppression. also filter out the boxes
+# with very low score (And calculate the iou between pred and ground truth???)
+def QueueTime_post_process(y_pred, max_boxes_count = 15, iou_threshold = 0.7, score_threshold = 0.5): # y_pred should be a 20*20*5 tensor
+	flatten_absolute_list = cnn_y_to_absolute(32, 32, y_pred) #hard code now!
+	scores = np.empty({400, 1}) #hard code now!
+	absolute_boxes = np.empty({400, 4}) #hard code now!
+	counter = 0
+	for entry in flatten_absolute_list:
+		scores[counter, 0] = entry['likelyhood']
+		# tensorflow needs [y1, x1, y2, x2]
+		absolute_boxes[counter, 1] = entry['bbox'][0] #x1
+		absolute_boxes[counter, 0] = entry['bbox'][1] #y1
+		absolute_boxes[counter, 3] = entry['bbox'][0] + entry['bbox'][2] #x2 = x1 + w
+		absolute_boxes[counter, 2] = entry['bbox'][1] + entry['bbox'][3] #y2 = y1 + h
 	
+	#pass the threshold for score
+	scores_tf = tf.convert_to_tensor(scores)
+	absolute_boxes_tf = tf.convert_to_tensor(absolute_boxes)
+	prediction_mask = scores_tf >= score_threshold
+	scores_tf = tf.boolean_mask(scores_tf, prediction_mask)
+	absolute_boxes_tf = tf.boolean_mask(absolute_boxes_tf, prediction_mask)
+
+	#after gathering
+	#nms_index should be 1*15
+	#scores_tf should be 15*1
+	#absolute_boxes_tf should be 15*4
+	nms_index = tf.image.non_max_suppression(
+        absolute_boxes_tf, scores_tf, max_boxes_count, iou_threshold=iou_threshold)
+	scores_tf = tf.gather(scores_tf, nms_index)
+	absolute_boxes_tf = tf.gather(absolute_boxes_tf, nms_index)
+
+	# convert two tfs back into numpy and score x1 y2 w h format
+	post_pred = []
+	scores_np = scores_tf.eval()
+	absolute_boxes_np = absolute_boxes_tf.eval()
+	counter = 0
+	for i in range(scores_np.shape[0]):
+		x1 = absolute_boxes_np[i][1]
+		y1 = absolute_boxes_np[i][0]
+		w = absolute_boxes_np[i][3] - absolute_boxes_np[i][1]
+		h = absolute_boxes_np[i][2] - absolute_boxes_np[i][0]
+		entry = {'score' : scores_np, 'bbox' : [x1, y1, w, h]}
+		post_pred.append(entry)
 	
+	return post_pred
+
+
+
+

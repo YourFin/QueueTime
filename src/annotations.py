@@ -92,7 +92,7 @@ def cnn_y_to_absolute(cell_width, cell_height, output_data):
     POS_BOX_CENTER_Y = 2
     POS_BOX_WIDTH = 3
     POS_BOX_HEIGHT = 4
-    (cell_row, cell_row, channels) = output_data.shape
+    (y_cells, x_cells, channels) = output_data.shape
     assert()
 
     bounding_boxes = []
@@ -100,14 +100,14 @@ def cnn_y_to_absolute(cell_width, cell_height, output_data):
     for x_cell in range(x_cells):
         for y_cell in range(y_cells):
             for box_num in range(floor(channels / 5)):
-                rel_width = output_data[x_cell, y_cell, box_num * 5 + POS_BOX_WIDTH]
-                rel_height = output_data[x_cell, y_cell, box_num * 5 + POS_BOX_HEIGHT]
+                rel_width = output_data[y_cell, x_cell, box_num * 5 + POS_BOX_WIDTH]
+                rel_height = output_data[y_cell, x_cell, box_num * 5 + POS_BOX_HEIGHT]
 
                 absolute_width = rel_width * cell_width
                 absolute_height = rel_height * cell_height
 
-                rel_box_center_x = output_data[x_cell, y_cell, box_num * 5 + POS_BOX_CENTER_X]
-                rel_box_center_y = output_data[x_cell, y_cell, box_num * 5 + POS_BOX_CENTER_Y]
+                rel_box_center_x = output_data[y_cell, x_cell, box_num * 5 + POS_BOX_CENTER_X]
+                rel_box_center_y = output_data[y_cell, x_cell, box_num * 5 + POS_BOX_CENTER_Y]
 
                 cell_box_center_x = rel_box_center_x * cell_width
                 cell_box_center_y = rel_box_center_y * cell_height
@@ -118,7 +118,7 @@ def cnn_y_to_absolute(cell_width, cell_height, output_data):
                 box_ul_x = cell_box_ul_x + (x_cell * cell_width)
                 box_ul_y = cell_box_ul_y + (y_cell * cell_height)
 
-                person_likelyhood = output_data[x_cell, y_cell, box_num * 5 + POS_OBJ_LIKELYHOOD]
+                person_likelyhood = output_data[y_cell, x_cell, box_num * 5 + POS_OBJ_LIKELYHOOD]
 
                 bounding_box = {
                     'bbox': [box_ul_x, box_ul_y, absolute_width, absolute_height],
