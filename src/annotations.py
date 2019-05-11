@@ -85,6 +85,7 @@ def get_image_annotations(coco, img_id):
 #    height *= cell_height
 #   Transform coordinates back to coco style list as (x_pos, y_pos,width, height)
 #   likelyhood key contains calculated likelyhood of the bounding box
+#   x_pos and y_pos are relative to the upper left corner of the image
 def cnn_y_to_absolute(cell_width, cell_height, output_data):
     # Need to lift into upper file
     POS_OBJ_LIKELYHOOD = 0
