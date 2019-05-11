@@ -50,7 +50,7 @@ if __name__ == '__main__':
                     help="path to output model")
     # ap.add_argument("-l", "--labelbin", required=True,
     # 	help="path to output label binarizer")
-    ap.add_argument("-i", "--image_count", type=int, default=500)
+    ap.add_argument("-i", "--image_count", type=int, default=800)
     ap.add_argument("-p", "--plot", type=str, default="plot.png",
                     help="path to output accuracy/loss plot")
     args = vars(ap.parse_args())
