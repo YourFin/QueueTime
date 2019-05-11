@@ -260,7 +260,7 @@ def training_data_generator(
     img_ids = get_downloaded_ids()
     img_ids = list(filter(is_not_greyscale, img_ids))[:num_images]
     for img_id in img_ids:
-        image = file_management.get_image(id)
+        image = file_management.get_image(img_id)
         image = np.divide(image, 256, dtype=np.float32)
         try:
             image = pad_image(image, PADDED_SIZE)
