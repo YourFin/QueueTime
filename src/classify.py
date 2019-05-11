@@ -13,8 +13,10 @@ from annotations import cnn_y_to_absolute, plot_annotations
 from QueueTimeNet import QueueTime_loss
 from keras.utils.generic_utils import get_custom_objects
 from preprocessing import pad_image, PADDED_SIZE
-import numpy as np
 from train import CELL_WIDTH, CELL_HEIGHT
+import numpy as np
+import matplotlib as plt
+
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -45,8 +47,14 @@ print("[INFO] classifying image...")
 proba = model.predict(image)[0]
 anns = cnn_y_to_absolute(CELL_WIDTH, CELL_HEIGHT, proba)
 
-plot_annotations(img_id, anns)
+# filter out all scores below threshold:
+anns = list(filter(lambda ann: ann['score'] > 0.001, anns))
 
+# Add color key:
+for ann in anns:
+    ann['color'] = plt.cm.jet(ann['score'])
+
+plot_annotations(img_id, anns)
 
 
 # # we'll mark our prediction as "correct" of the input image filename
