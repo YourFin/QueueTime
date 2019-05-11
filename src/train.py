@@ -2,8 +2,8 @@
 # https://www.pyimagesearch.com/2018/04/16/keras-and-convolutional-neural-networks-cnns/
 
 DATA_SIZE = 64115
-EPOCHS = 5
-INIT_LR = 1e-3   #0.001 learning_rate
+EPOCHS = 40
+INIT_LR = 1e-2   #0.01 learning_rate
 BS = 16
 IMAGE_DIMS = (640, 640, 3)
 CELL_ROW = 20
