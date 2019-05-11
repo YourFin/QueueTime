@@ -14,6 +14,7 @@ from QueueTimeNet import QueueTime_loss
 from keras.utils.generic_utils import get_custom_objects
 from preprocessing import pad_image, PADDED_SIZE
 import numpy as np
+from train import CELL_WIDTH, CELL_HEIGHT
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -41,7 +42,7 @@ model = load_model(args["model"])
 
 # classify the input image
 print("[INFO] classifying image...")
-proba = model.predict(image)
+proba = model.predict(CELL_WIDTH, CELL_HEIGHT,image)
 anns = cnn_y_to_absolute(proba)
 
 plot_annotations(img_id, anns)

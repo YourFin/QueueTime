@@ -24,7 +24,7 @@ from math import floor
 # Practica:
 #  As an example of coloring by likelyhood:
 #  # Assume $output is the output of the NN
-#  anns = cnn_y_to_absolute(output)
+#  anns = cnn_y_to_absolute(CELLL_WIDTH, CELL_HEIGHT, output)
 #  for ann in anns:
 #    ann['color'] = plt.cm.jet(ann['likelyhood'])
 #  plot_annotations(img_id, anns)
