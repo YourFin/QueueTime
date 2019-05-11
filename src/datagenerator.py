@@ -69,12 +69,14 @@ class DataGenerator(keras.utils.Sequence, ABC):
         Purpose:
          find the area of the intersection of two rectangles
         Paramaters:
-         rect1_ul: (number, number) - the upper left hand corner of
-                                      the first rectangle
+         rect1_ul: (number, number) - the coordinates of the upper left hand
+                                      corner of the first rectangle, in the
+                                      form (x,y)
          rect1_dims: (number, number) - the width and height, in order,
                                         of the first rectangle
-         rect2_ul: (number, number) - the upper left hand corner of
-                                      the second rectangle
+         rect2_ul: (number, number) - the coordinates of the upper left hand
+                                      corner of the second rectangle, in the
+                                      form (x,y)
          rect2_dims: (number, number) - the width and height, in order,
                                         of the second rectangle
         Produces:
@@ -82,14 +84,20 @@ class DataGenerator(keras.utils.Sequence, ABC):
         Preconditions:
          No additional
         Postconditions:
-
+         No additional
+        Implementation:
+         1. Find the bottom right portion of both rectangles by adding the
+            widths and heights to their respective coordinates
+         2. Find the upper right and lower left corners of the rectangle that
+            forms their intersection. The former is done by finding the further
+            of the two upper left corners from the origin in both directions
         """
         rect1_br = (rect1_ul[0] + self.rect1_dims[0], rect1_ul[1] + self.rect1_dims[1])
         rect2_br = (rect2_ul[0] + self.rect2_dims[0], rect2_ul[1] + self.rect2_dims[1])
 
         # find the upper right corner of their intersection:
         intersection_ul = (max(rect1_ul[0], rect2_ul[0]), max(rect1_ul[1], rect2_ul[1]))
-        intersection_br = (min(rect1_ul[0], rect2_ul[0]), min(rect1_ul[1], rect2_ul[1]))
+        intersection_br = (min(rect1_br[0], rect2_br[0]), min(rect1_br[1], rect2_br[1]))
 
         intersection_width = intersection_br[0] - intersection_ul[0]
         intersection_height = intersection_br[1] - intersection_ul[1]
