@@ -42,8 +42,8 @@ model = load_model(args["model"])
 
 # classify the input image
 print("[INFO] classifying image...")
-proba = model.predict(CELL_WIDTH, CELL_HEIGHT,image)
-anns = cnn_y_to_absolute(proba)
+proba = model.predict(image)
+anns = cnn_y_to_absolute(CELL_WIDTH, CELL_HEIGHT, proba)
 
 plot_annotations(img_id, anns)
 
