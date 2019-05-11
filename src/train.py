@@ -120,7 +120,7 @@ if __name__ == '__main__':
     H = model.fit_generator(
         aug.flow(trainX, trainY, batch_size=BS),
         validation_data=(testX, testY),
-        steps_per_epoch=len(trainX) // BS,
+        steps_per_epoch=len(trainX) // BS, 
         epochs=EPOCHS, verbose=1)
 
     # save the model to disk
