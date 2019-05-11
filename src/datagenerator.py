@@ -8,24 +8,24 @@ from math import ceil, floor
 
 class DataGenerator(keras.utils.Sequence, ABC):
     """
-    image_width: final width of the images as passed out
-    image_height: final height of the images
+    img_width: final width of the imgs as passed out
+    img_height: final height of the imgs
     """
     def __init__(self,
-                 image_width,
-                 image_height,
+                 img_width,
+                 img_height,
                  cell_size,
-                 image_ids,
+                 img_ids,
                  bounding_box_count=1,
                  intersection_threshold=0.7
                  batch_size=20,
     ):
-        self.image_width = image_width
-        self.image_height = image_height
+        self.img_width = img_width
+        self.img_height = img_height
         self.cell_width = cell_size
         self.cell_height = cell_size
         self.bounding_box_count = bounding_box_count
-        self.image_ids = image_ids
+        self.img_ids = img_ids
 
         self.PADDED_SIZE = 640
 
@@ -43,10 +43,10 @@ class DataGenerator(keras.utils.Sequence, ABC):
 
     def __len__(self):
         'Number of batches per epoch'
-        return floor(len(self.image_ids) / self.batch_size)
+        return floor(len(self.img_ids) / self.batch_size)
 
     @abstractmethod
-    def get_image(self, img_id):
+    def get_img(self, img_id):
         raise NotImplementedError
 
     @abstractmethod
@@ -99,6 +99,8 @@ class DataGenerator(keras.utils.Sequence, ABC):
         intersection_width = intersection_br[0] - intersection_ul[0]
         intersection_height = intersection_br[1] - intersection_ul[1]
 
+        return intersection_width * intersection_height
+
     # Procedure:
     #  gen_training_tensor
     # Purpose:
@@ -109,7 +111,7 @@ class DataGenerator(keras.utils.Sequence, ABC):
     #    NOTE: Dead paramater for now - only works with one
     #  cell_width: int - the width in pixels of a cell in the image.
     #  cell_height: int - the height in pixels of a cell in the image.
-    #  img_id: id - id for the image
+    #  img_id: id - id for the img
     # Produces:
     #  output: tensor[double] - A tensor of training data
     # Preconditions:
@@ -141,7 +143,7 @@ class DataGenerator(keras.utils.Sequence, ABC):
 
             # Find the center of the box in terms of the whole image
             # These values are purposely floats to keep as much information as
-            #  possible about the center of the image
+            #  possible about the center of the img
             abs_center_x = abs_ul_x + width / 2
             abs_center_y = abs_ul_y + height / 2
 
