@@ -55,7 +55,7 @@ def gen_training_tensor(coco, bounding_box_count, cell_width_px, cell_height_px,
 
     # Position of the various training parameters along the last dimension
     # of the output data from the neural network
-    POS_OBJ_LIKELYHOOD = 0
+    POS_OBJ_SCORE = 0
     POS_BOX_CENTER_X = 1
     POS_BOX_CENTER_Y = 2
     POS_BOX_WIDTH = 3
@@ -107,7 +107,7 @@ def gen_training_tensor(coco, bounding_box_count, cell_width_px, cell_height_px,
         rel_height = height / cell_height_px
 
         # TODO: Move to handling more than one bounding box
-        if training_data[cell_y_pos, cell_x_pos, POS_OBJ_LIKELYHOOD] != NO_OBJECT_WEIGHT:
+        if training_data[cell_y_pos, cell_x_pos, POS_OBJ_SCORE] != NO_OBJECT_WEIGHT:
             logging.warn("Image %d has multiple bounding boxes in cell (%d,%d)" % (
                 img_id,
                 cell_x_pos,
@@ -119,7 +119,7 @@ def gen_training_tensor(coco, bounding_box_count, cell_width_px, cell_height_px,
         training_data[cell_y_pos, cell_x_pos, POS_BOX_CENTER_Y] = rel_center_y
         training_data[cell_y_pos, cell_x_pos, POS_BOX_WIDTH] = rel_width
         training_data[cell_y_pos, cell_x_pos, POS_BOX_HEIGHT] = rel_height
-        training_data[cell_y_pos, cell_x_pos, POS_OBJ_LIKELYHOOD] = HAS_OBJECT_WEIGHT
+        training_data[cell_y_pos, cell_x_pos, POS_OBJ_SCORE] = HAS_OBJECT_WEIGHT
         print("[DEBUG]", training_data[cell_y_pos, cell_x_pos, :])
     return training_data
 

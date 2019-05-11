@@ -135,15 +135,15 @@ if __name__ == '__main__':
 
     # plot the training loss and accuracy
     # check this later
-    plt.style.use("ggplot")
-    plt.figure()
-    N = EPOCHS
-    plt.plot(np.arange(0, N), H.history["loss"], label="train_loss")
-    plt.plot(np.arange(0, N), H.history["val_loss"], label="val_loss")
-    plt.plot(np.arange(0, N), H.history["acc"], label="train_acc")
-    plt.plot(np.arange(0, N), H.history["val_acc"], label="val_acc")
-    plt.title("Training Loss and Accuracy")
-    plt.xlabel("Epoch #")
-    plt.ylabel("Loss/Accuracy")
-    plt.legend(loc="upper left")
+    # plt.style.use("ggplot")
+    # plt.figure()
+    # N = EPOCHS
+    # plt.plot(np.arange(0, N), H.history["loss"], label="train_loss")
+    # plt.plot(np.arange(0, N), H.history["val_loss"], label="val_loss")
+    # plt.plot(np.arange(0, N), H.history["acc"], label="train_acc")
+    # plt.plot(np.arange(0, N), H.history["val_acc"], label="val_acc")
+    # plt.title("Training Loss and Accuracy")
+    # plt.xlabel("Epoch #")
+    # plt.ylabel("Loss/Accuracy")
+    # plt.legend(loc="upper left")
     # plt.savefig(args["plot"])
