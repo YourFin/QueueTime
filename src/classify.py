@@ -13,6 +13,7 @@ from annotations import cnn_y_to_absolute, plot_annotations
 from QueueTimeNet import QueueTime_loss
 from keras.utils.generic_utils import get_custom_objects
 from preprocessing import pad_image, PADDED_SIZE
+import numpy as np
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -27,7 +28,7 @@ args = vars(ap.parse_args())
 img_id = args["image"]
 
 image = pad_image(get_image(img_id), PADDED_SIZE)
-#image = np.expand_dims(image, axis=0) #?
+image = np.expand_dims(image, axis=0) #?
 
 # load the trained convolutional neural network and the label
 # binarizer
