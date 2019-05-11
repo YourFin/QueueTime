@@ -19,6 +19,8 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras import backend as K
 from annotations import cnn_y_to_absolute
 
+
+# should output a 10*10*5 tensor
 def build(width, height, depth, classes):
 	# initialize the model along with the input shape to be
 	# "channels last" and the channels dimension itself
@@ -101,29 +103,29 @@ def build(width, height, depth, classes):
 	model.add(MaxPooling2D(pool_size=(2, 2)))
 
 	# Conv. Layer * 2*2 + 2
-	# model.add(Conv2D(512, (1, 1), padding="same"))
-	# model.add(BatchNormalization(axis=chanDim))
-	# model.add(LeakyReLU(alpha=0.1))
+	model.add(Conv2D(512, (1, 1), padding="same"))
+	model.add(BatchNormalization(axis=chanDim))
+	model.add(LeakyReLU(alpha=0.1))
 
-	# model.add(Conv2D(1024, (3, 3), padding="same"))
-	# model.add(BatchNormalization(axis=chanDim))
-	# model.add(LeakyReLU(alpha=0.1))
+	model.add(Conv2D(1024, (3, 3), padding="same"))
+	model.add(BatchNormalization(axis=chanDim))
+	model.add(LeakyReLU(alpha=0.1))
 
-	# model.add(Conv2D(512, (1, 1), padding="same"))
-	# model.add(BatchNormalization(axis=chanDim))
-	# model.add(LeakyReLU(alpha=0.1))
+	model.add(Conv2D(512, (1, 1), padding="same"))
+	model.add(BatchNormalization(axis=chanDim))
+	model.add(LeakyReLU(alpha=0.1))
 
-	# model.add(Conv2D(1024, (3, 3), padding="same"))
-	# model.add(BatchNormalization(axis=chanDim))
-	# model.add(LeakyReLU(alpha=0.1))
+	model.add(Conv2D(1024, (3, 3), padding="same"))
+	model.add(BatchNormalization(axis=chanDim))
+	model.add(LeakyReLU(alpha=0.1))
 
-	# model.add(Conv2D(1024, (3, 3), padding="same"))
-	# model.add(BatchNormalization(axis=chanDim))
-	# model.add(LeakyReLU(alpha=0.1))
+	model.add(Conv2D(1024, (3, 3), padding="same"))
+	model.add(BatchNormalization(axis=chanDim))
+	model.add(LeakyReLU(alpha=0.1))
 
-	# model.add(Conv2D(1024, (3, 3), strides = 2, padding="valid"))
-	# model.add(BatchNormalization(axis=chanDim))
-	# model.add(LeakyReLU(alpha=0.1))
+	model.add(Conv2D(1024, (3, 3), strides = 2, padding="valid"))
+	model.add(BatchNormalization(axis=chanDim))
+	model.add(LeakyReLU(alpha=0.1))
 
 	# Conv. Layer * 2
 	model.add(Conv2D(1024, (3, 3), padding="same"))
@@ -151,13 +153,13 @@ def build(width, height, depth, classes):
 	# return the constructed network architecture
 	return model
 
-def QueueTime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
+def QueueTime_loss(y_true, y_pred): # should be a BS * CELL_ROW * CELL_COL * 5 tensor
 	# each one of them should now be batch*10*10*5
 	print("[INFO] ytrue", y_true)
 	print("[INFO] ypred", y_pred)
 
-	y_true = K.reshape(y_true, [-1, 20, 20, 5])
-	y_pred = K.reshape(y_pred, [-1, 20, 20, 5])
+	y_true = K.reshape(y_true, [-1, 10, 10, 5])
+	y_pred = K.reshape(y_pred, [-1, 10, 10, 5])
 
 	print("[INFO] ytrue", y_true)
 	print("[INFO] ypred", y_pred)
@@ -188,17 +190,17 @@ def QueueTime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
 	# print("[INFO] y_true is ", y_true, ",m is ", m, "xy_loss is", xy_loss[0])
 
 
-	loss = (xy_loss+wh_loss+pr_loss_neg+pr_loss_pos)/32
+	loss = (xy_loss+wh_loss+pr_loss_neg+pr_loss_pos)/16 #hard code BS now
 	print("[INFO] loss", loss)
 	return K.sum(K.sum(K.sum(loss,0), 0), 0, True)
 	
 
 # get rid of the duplicates using non-max suppression. also filter out the boxes
 # with very low score (And calculate the iou between pred and ground truth???)
-def QueueTime_post_process(y_pred, max_boxes_count = 15, iou_threshold = 0.7, score_threshold = 0.5): # y_pred should be a 20*20*5 tensor
-	flatten_absolute_list = cnn_y_to_absolute(32, 32, y_pred) #hard code now!
-	scores = np.empty({400, 1}) #hard code now!
-	absolute_boxes = np.empty({400, 4}) #hard code now!
+def QueueTime_post_process(y_pred, max_boxes_count = 15, iou_threshold = 0.7, score_threshold = 0.5): # y_pred should be a 10*10*5 tensor
+	flatten_absolute_list = cnn_y_to_absolute(64, 64, y_pred) #hard code now!
+	scores = np.empty({100, 1}) #hard code now!
+	absolute_boxes = np.empty({100, 4}) #hard code now!
 	counter = 0
 	for entry in flatten_absolute_list:
 		scores[counter, 0] = entry['likelyhood']
