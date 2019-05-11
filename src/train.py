@@ -1,7 +1,7 @@
 # This code is adapted from
 # https://www.pyimagesearch.com/2018/04/16/keras-and-convolutional-neural-networks-cnns/
 
-DATA_SIZE = 64115
+DATA_SIZE = 500 #out of 64115
 EPOCHS = 20
 INIT_LR = 1e-2   #learning_rate
 BS = 16
@@ -18,8 +18,6 @@ if __name__ == '__main__':
     # python train.py --dataset dataset --model pokedex.model --labelbin lb.pickle
 
     # # set the matplotlib backend so figures can be saved in the background
-    from preprocessing import all_imgs_numpy, all_ground_truth_numpy
-    from QueueTimeNet import build, QueueTime_loss
 
     # import the necessary packages
     import matplotlib
@@ -41,6 +39,8 @@ if __name__ == '__main__':
     from pycocotools.coco import COCO
     from file_management import ANNOTATION_FILE, get_downloaded_ids
     from annotations import get_image_annotations, plot_annotations
+    from preprocessing import all_imgs_numpy, all_ground_truth_numpy, training_data_generator
+    from QueueTimeNet import build, QueueTime_loss
 
     # construct the argument parse and parse the arguments
     ap = argparse.ArgumentParser()
@@ -83,30 +83,23 @@ if __name__ == '__main__':
 
     coco = COCO(ANNOTATION_FILE)
 
-    labels = all_ground_truth_numpy(coco, args["image_count"], 1, CELL_WIDTH, CELL_HEIGHT)
-    data = all_imgs_numpy(args["image_count"])
+    # labels = all_ground_truth_numpy(coco, args["image_count"], 1, CELL_WIDTH, CELL_HEIGHT)
+    # data = all_imgs_numpy(args["image_count"])
 
-    # scale the raw pixel intensities to the range [0, 1]
-    # data = np.array(data, dtype="float") / 255.0
-    # labels = np.array(labels)
-    print("[INFO] data matrix: {:.2f}MB".format(
-        data.nbytes / (1024 * 1000.0)))
-
-    # binarize the labels
-    # lb = LabelBinarizer()
-    # labels = lb.fit_transform(labels)
+    # print("[INFO] data matrix: {:.2f}MB".format(
+    #     data.nbytes / (1024 * 1000.0)))
 
     # partition the data into training and testing splits using 80% of
     # the data for training and the remaining 20% for testing
-    (trainX, testX, trainY, testY) = train_test_split(data,
-                                                      labels, test_size=0.2, random_state=42)
+    # (trainX, testX, trainY, testY) = train_test_split(data,
+    #                                                   labels, test_size=0.2, random_state=42)
 
-    print("[INFO] the true size", trainX.shape)
+    # print("[INFO] the true size", trainX.shape)
 
     # construct the image generator for data augmentation
-    aug = ImageDataGenerator(rotation_range=25, width_shift_range=0.1,
-                             height_shift_range=0.1, shear_range=0.2, zoom_range=0.2,
-                             horizontal_flip=True, fill_mode="nearest")
+    # aug = ImageDataGenerator(rotation_range=25, width_shift_range=0.1,
+    #                          height_shift_range=0.1, shear_range=0.2, zoom_range=0.2,
+    #                          horizontal_flip=True, fill_mode="nearest")
 
     # initialize the model
     print("[INFO] compiling model...")
@@ -118,9 +111,10 @@ if __name__ == '__main__':
     # train the network
     print("[INFO] training network...")
     H = model.fit_generator(
-        aug.flow(trainX, trainY, batch_size=BS),
-        validation_data=(testX, testY),
-        steps_per_epoch=len(trainX) // BS, 
+        training_data_generator(coco, args["image_count"], 1, CELL_WIDTH, CELL_HEIGHT),
+        # aug.flow(trainX, trainY, batch_size=BS),
+        # validation_data=(testX, testY),
+        steps_per_epoch=len(args["image_count"]) // BS, 
         epochs=EPOCHS, verbose=1)
 
     # save the model to disk

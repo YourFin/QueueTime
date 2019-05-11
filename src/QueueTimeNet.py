@@ -183,8 +183,6 @@ def QueueTime_loss(y_true, y_pred): # should be a BS * CELL_ROW * CELL_COL * 5 t
 
 	pr_loss_pos = indicator * K.square(indicator - y_pred[...,0])
 	pr_loss_neg = noobj*(1-indicator) * K.square(indicator - y_pred[...,0])
-	
-	# K.shape(x_loss)
 
 	# m = K.int_shape(y_true)
 	# print("[INFO] y_true is ", y_true, ",m is ", m, "xy_loss is", xy_loss[0])
