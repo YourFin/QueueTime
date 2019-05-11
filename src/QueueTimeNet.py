@@ -162,8 +162,8 @@ def QueueTime_loss(y_true, y_pred): # should be a CELL_ROW * CELL_COL * 5 tensor
 	print("[INFO] ytrue", y_true)
 	print("[INFO] ypred", y_pred)
 
-	coord = 5
-	noobj = 0.5
+	coord = 10
+	noobj = 0.1
 
 	indicator = y_true[...,0]
 	print("[INFO] indicator", indicator)
