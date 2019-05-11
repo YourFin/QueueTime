@@ -93,8 +93,8 @@ class DataGenerator(keras.utils.Sequence, ABC):
         rect2_br = (rect2_ul[0] + self.rect2_dims[0], rect2_ul[1] + self.rect2_dims[1])
 
         # find the upper right corner of their intersection:
-        intersection_ul = (min(rect1_ul[0], rect2_ul[0]), min(rect1_ul[1], rect2_ul[1]))
-        intersection_br = (max(rect1_ul[0], rect2_ul[0]), max(rect1_ul[1], rect2_ul[1]))
+        intersection_ul = (max(rect1_ul[0], rect2_ul[0]), max(rect1_ul[1], rect2_ul[1]))
+        intersection_br = (min(rect1_ul[0], rect2_ul[0]), min(rect1_ul[1], rect2_ul[1]))
 
         intersection_width = intersection_br[0] - intersection_ul[0]
         intersection_height = intersection_br[1] - intersection_ul[1]
@@ -181,6 +181,7 @@ class DataGenerator(keras.utils.Sequence, ABC):
                 cell_ul, (self.cell_width, self.cell_height),
                 (abs_ul_x, abs_ul_y), (width, height)
             )
+            assert intersection_area > 0, "human box does not intersect with cell"
 
             #TODO
             training_data[cell_y_pos, cell_x_pos, self.POS_SCORE] = self.HAS_OBJECT_WEIGHT
