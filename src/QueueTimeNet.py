@@ -123,7 +123,7 @@ def build(width, height, depth, classes):
 	model.add(BatchNormalization(axis=chanDim))
 	model.add(LeakyReLU(alpha=0.1))
 
-	model.add(Conv2D(1024, (3, 3), strides = 2, padding="valid"))
+	model.add(Conv2D(1024, (3, 3), strides = 2, padding="same"))
 	model.add(BatchNormalization(axis=chanDim))
 	model.add(LeakyReLU(alpha=0.1))
 
