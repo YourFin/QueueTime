@@ -26,7 +26,7 @@ from math import floor
 #  # Assume $output is the output of the NN
 #  anns = cnn_y_to_absolute(CELLL_WIDTH, CELL_HEIGHT, output)
 #  for ann in anns:
-#    ann['color'] = plt.cm.jet(ann['likelyhood'])
+#    ann['color'] = plt.cm.jet(ann['score'])
 #  plot_annotations(img_id, anns)
 def plot_annotations(img_id, annotations, color='r'):
     img = get_image(img_id)
@@ -92,7 +92,6 @@ def cnn_y_to_absolute(cell_width, cell_height, output_data):
     POS_BOX_WIDTH = 3
     POS_BOX_HEIGHT = 4
     (y_cells, x_cells, channels) = output_data.shape
-    assert()
 
     bounding_boxes = []
 
