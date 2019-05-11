@@ -272,7 +272,7 @@ def training_data_generator(
             bounding_box_count,
             cell_width_px,
             cell_height_px,
-            id
+            img_id
         )
         yield (image, ground_truth)
 
