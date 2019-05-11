@@ -24,7 +24,7 @@ from math import floor
 # Practica:
 #  As an example of coloring by likelyhood:
 #  # Assume $output is the output of the NN
-#  anns = cnn_y_to_absolute(output)
+#  anns = cnn_y_to_absolute(CELLL_WIDTH, CELL_HEIGHT, output)
 #  for ann in anns:
 #    ann['color'] = plt.cm.jet(ann['likelyhood'])
 #  plot_annotations(img_id, anns)
@@ -71,23 +71,22 @@ def get_image_annotations(coco, img_id):
 #  cell_width: int - width of cells in pixels
 #  cell_height: int - height of cells in pixels
 #  output_data: numpy[NxMxB*5] - output data from neural network
-#  threshold: float=
-#   (same format as ground truth data)
 # Produces:
-#  bounding_boxes: [{'bbox': (int, int, int, int), 'likelyhood': int}] - list of bounding boxes as in coco dataset
+#  bounding_boxes: [{'bbox': [int, int, int, int], 'score': int}] - list of bounding boxes as in coco dataset
 # Preconditions:
 #  no additional
 # Postconditions:
-#  each bbox entry will be of the form (x_pos, y_pos, width, height)
+#  each bbox entry will be of the form (ul_x_pos, ul_y_pos, width, height)
 #  Algorithm:
 #   Transform values back to pixels:
 #    width *= cell_width
 #    height *= cell_height
-#   Transform coordinates back to coco style list as (x_pos, y_pos,width, height)
-#   likelyhood key contains calculated likelyhood of the bounding box
+#   Transform coordinates back to coco style list as (ul_x_pos, ul_y_pos,width, height)
+#   score key contains calculated score of the bounding box
+#   x_pos and y_pos are representing the upper left corner of the box
 def cnn_y_to_absolute(cell_width, cell_height, output_data):
     # Need to lift into upper file
-    POS_OBJ_LIKELYHOOD = 0
+    POS_OBJ_SCORE = 0
     POS_BOX_CENTER_X = 1
     POS_BOX_CENTER_Y = 2
     POS_BOX_WIDTH = 3
@@ -118,11 +117,11 @@ def cnn_y_to_absolute(cell_width, cell_height, output_data):
                 box_ul_x = cell_box_ul_x + (x_cell * cell_width)
                 box_ul_y = cell_box_ul_y + (y_cell * cell_height)
 
-                person_likelyhood = output_data[y_cell, x_cell, box_num * 5 + POS_OBJ_LIKELYHOOD]
+                score = output_data[y_cell, x_cell, box_num * 5 + POS_OBJ_SCORE]
 
                 bounding_box = {
                     'bbox': [box_ul_x, box_ul_y, absolute_width, absolute_height],
-                    'likelyhood': person_likelyhood
+                    'score': score
                 }
                 bounding_boxes.append(bounding_box)
 
