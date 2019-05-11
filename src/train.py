@@ -36,12 +36,12 @@ ap = argparse.ArgumentParser()
 # ap.add_argument("-d", "--dataset", required=True,
 # 	help="path to input dataset (i.e., directory of images)")
 ap.add_argument("-m", "--model", required=True,
-	help="path to output model")
+                help="path to output model")
 # ap.add_argument("-l", "--labelbin", required=True,
 # 	help="path to output label binarizer")
 ap.add_argument("-i", "--image_count", type=int, default=500)
 ap.add_argument("-p", "--plot", type=str, default="plot.png",
-	help="path to output accuracy/loss plot")
+                help="path to output accuracy/loss plot")
 args = vars(ap.parse_args())
 
 # initialize the number of epochs to train for, initial learning rate,
@@ -91,7 +91,7 @@ data = all_imgs_numpy(args["image_count"])
 # data = np.array(data, dtype="float") / 255.0
 # labels = np.array(labels)
 print("[INFO] data matrix: {:.2f}MB".format(
-	data.nbytes / (1024 * 1000.0)))
+    data.nbytes / (1024 * 1000.0)))
 
 # binarize the labels
 # lb = LabelBinarizer()
@@ -100,29 +100,29 @@ print("[INFO] data matrix: {:.2f}MB".format(
 # partition the data into training and testing splits using 80% of
 # the data for training and the remaining 20% for testing
 (trainX, testX, trainY, testY) = train_test_split(data,
-	labels, test_size=0.2, random_state=42)
+                                                  labels, test_size=0.2, random_state=42)
 
 print("[INFO] the true size", trainX.shape)
 
 # construct the image generator for data augmentation
 aug = ImageDataGenerator(rotation_range=25, width_shift_range=0.1,
-	height_shift_range=0.1, shear_range=0.2, zoom_range=0.2,
-	horizontal_flip=True, fill_mode="nearest")
+                         height_shift_range=0.1, shear_range=0.2, zoom_range=0.2,
+                         horizontal_flip=True, fill_mode="nearest")
 
 # initialize the model
 print("[INFO] compiling model...")
 model = build(width=IMAGE_DIMS[1], height=IMAGE_DIMS[0],
-	depth=IMAGE_DIMS[2], classes=NUM_CLASSES)
+              depth=IMAGE_DIMS[2], classes=NUM_CLASSES)
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 model.compile(loss=QueueTime_loss, optimizer=opt) # not sure about the metrics, decided later
 
 # train the network
 print("[INFO] training network...")
 H = model.fit_generator(
-	aug.flow(trainX, trainY, batch_size=BS),
-	validation_data=(testX, testY),
-	steps_per_epoch=len(trainX) // BS,
-	epochs=EPOCHS, verbose=1)
+    aug.flow(trainX, trainY, batch_size=BS),
+    validation_data=(testX, testY),
+    steps_per_epoch=len(trainX) // BS,
+    epochs=EPOCHS, verbose=1)
 
 # save the model to disk
 print("[INFO] serializing network...")
