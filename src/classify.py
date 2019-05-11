@@ -6,14 +6,11 @@
 # python classify.py --model pokedex.model --labelbin lb.pickle --image examples/charmander_counter.png
 
 # import the necessary packages
-from keras.preprocessing.image import img_to_array
 from keras.models import load_model
 import numpy as np
 import argparse
-import imutils
-import pickle
-import cv2
-import os
+from file_management import get_image
+from annotations import cnn_y_to_absolute, plot_annotations
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -22,18 +19,13 @@ ap.add_argument("-m", "--model", required=True,
 # ap.add_argument("-l", "--labelbin", required=True,
 # 	help="path to label binarizer")
 ap.add_argument("-i", "--image", required=True,
-	help="path to input image")
+	            help="input image id", type=int)
 args = vars(ap.parse_args())
 
-# load the image
-image = cv2.imread(args["image"])
-output = image.copy()
- 
-# pre-process the image for classification --- TODO look at this
-image = cv2.resize(image, (640, 640))
-image = image.astype("float") / 255.0
-image = img_to_array(image)
-image = np.expand_dims(image, axis=0) #?
+img_id = args["image"]
+
+image = get_image(img_id)
+#image = np.expand_dims(image, axis=0) #?
 
 # load the trained convolutional neural network and the label
 # binarizer
@@ -44,8 +36,10 @@ model = load_model(args["model"])
 # classify the input image
 print("[INFO] classifying image...")
 proba = model.predict(image)
-# idx = np.argmax(proba)
-# label = lb.classes_[idx]
+anns = cnn_y_to_absolute(proba)
+plot_annotations(img_id, anns)
+
+
 
 # # we'll mark our prediction as "correct" of the input image filename
 # # contains the predicted label text (obviously this makes the
