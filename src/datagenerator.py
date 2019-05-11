@@ -177,14 +177,12 @@ class DataGenerator(keras.utils.Sequence, ABC):
             ### Calculate whether or not the score should be one
             # Find the upper left and bottom right corners of the cell
             cell_ul = (cell_x_pos * self.cell_width, cell_y_pos * self.cell_height)
-            cell_br = (cell_ul[0] + self.cell_width, cell_ul[1] + self.cell_height)
+            intersection_area = self._intersecion_area(
+                cell_ul, (self.cell_width, self.cell_height),
+                (abs_ul_x, abs_ul_y), (width, height)
+            )
 
-            # Find the bottom right corner of the bonuding box:
-            bbox_ul = (abs_ul_x, abs_ul_y)
-            bbox_br = (abs_ul_x + width, abs_ul_y + height)
-
-
-
+            #TODO
             training_data[cell_y_pos, cell_x_pos, self.POS_SCORE] = self.HAS_OBJECT_WEIGHT
         return training_data
 
