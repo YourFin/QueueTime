@@ -274,7 +274,7 @@ def training_data_generator(
             cell_height_px,
             img_id
         )
-        yield (image, ground_truth)
+        yield (np.expand_dims(image, axis=0), ground_truth)
 
 
 
