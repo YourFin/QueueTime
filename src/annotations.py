@@ -94,12 +94,11 @@ def cnn_y_to_absolute(cell_width, cell_height, output_data):
     POS_BOX_WIDTH = 3
     POS_BOX_HEIGHT = 4
     (cell_row, cell_row, channels) = output_data.shape
-    assert()
 
     bounding_boxes = []
 
-    for x_cell in range(x_cells):
-        for y_cell in range(y_cells):
+    for x_cell in range(cell_row):
+        for y_cell in range(cell_columns):
             for box_num in range(floor(channels / 5)):
                 rel_width = output_data[x_cell, y_cell, box_num * 5 + POS_BOX_WIDTH]
                 rel_height = output_data[x_cell, y_cell, box_num * 5 + POS_BOX_HEIGHT]
