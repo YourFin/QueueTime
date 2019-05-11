@@ -5,6 +5,8 @@ import file_management
 from annotations import get_image_annotations
 from file_management import get_downloaded_ids, get_image
 
+from QueueTimeNet import POS_SCORE, POS_BOX_CENTER_X, POS_BOX_CENTER_Y, POS_BOX_WIDTH, POS_BOX_HEIGHT
+
 PADDED_SIZE = 640
 
 # Procedure:

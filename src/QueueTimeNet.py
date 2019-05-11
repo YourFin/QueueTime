@@ -19,6 +19,13 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras import backend as K
 from annotations import cnn_y_to_absolute
 
+
+POS_SCORE = 0
+POS_BOX_CENTER_X = 1
+POS_BOX_CENTER_Y = 2
+POS_BOX_WIDTH = 3
+POS_BOX_HEIGHT = 4
+
 def build(width, height, depth, classes):
 	# initialize the model along with the input shape to be
 	# "channels last" and the channels dimension itself

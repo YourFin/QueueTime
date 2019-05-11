@@ -3,6 +3,8 @@ import numpy as np
 from abc import ABC, abstractmethod
 from math import ceil, floor
 
+from QueueTimeNet import POS_SCORE, POS_BOX_CENTER_X, POS_BOX_CENTER_Y, POS_BOX_WIDTH, POS_BOX_HEIGHT
+
 # Help from https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly
 # in this file
 
@@ -14,7 +16,8 @@ class DataGenerator(keras.utils.Sequence, ABC):
     def __init__(self,
                  img_width,
                  img_height,
-                 cell_size,
+                 cell_height,
+                 cell_width,
                  img_ids,
                  bounding_box_count=1,
                  intersection_threshold=0.7
@@ -22,8 +25,8 @@ class DataGenerator(keras.utils.Sequence, ABC):
     ):
         self.img_width = img_width
         self.img_height = img_height
-        self.cell_width = cell_size
-        self.cell_height = cell_size
+        self.cell_width = cell_width
+        self.cell_height = cell_height
         self.bounding_box_count = bounding_box_count
         self.img_ids = img_ids
 
@@ -32,14 +35,6 @@ class DataGenerator(keras.utils.Sequence, ABC):
         self.DEFAULT_LOCATION = 0
         self.NO_OBJECT_WEIGHT = 0
         self.HAS_OBJECT_WEIGHT = 1
-
-        # Position of the various training parameters along the last dimension
-        # of the output data from the neural network
-        self.POS_SCORE = 0
-        self.POS_BOX_CENTER_X = 1
-        self.POS_BOX_CENTER_Y = 2
-        self.POS_BOX_WIDTH = 3
-        self.POS_BOX_HEIGHT = 4
 
     def __len__(self):
         'Number of batches per epoch'
@@ -53,7 +48,7 @@ class DataGenerator(keras.utils.Sequence, ABC):
     def get_annotations(self, img_id):
         """
         Procedure:
-         get_annotations
+         get_annotations from coco dataset api and convert it into absolute scale
         Purpose:
          return the annotations for a given image id
         Parameters:
