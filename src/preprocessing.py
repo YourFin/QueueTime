@@ -107,12 +107,12 @@ def get_y_true(coco, bounding_box_count, cell_width_px, cell_height_px, img_id):
         rel_height = height / cell_height_px
 
         # TODO: Move to handling more than one bounding box
-        if y_true[cell_y_pos, cell_x_pos, POS_OBJ_SCORE] != NO_OBJECT_WEIGHT:
-            logging.warn("Image %d has multiple bounding boxes in cell (%d,%d)" % (
-                img_id,
-                cell_x_pos,
-                cell_y_pos
-            ))
+        # if y_true[cell_y_pos, cell_x_pos, POS_OBJ_SCORE] != NO_OBJECT_WEIGHT:
+        #     logging.warn("Image %d has multiple bounding boxes in cell (%d,%d)" % (
+        #         img_id,
+        #         cell_x_pos,
+        #         cell_y_pos
+        #     ))
 
         # Set values for the training data
         y_true[cell_y_pos, cell_x_pos, POS_BOX_CENTER_X] = rel_center_x
