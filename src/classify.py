@@ -31,7 +31,7 @@ args = vars(ap.parse_args())
 img_id = args["image"]
 
 image = pad_image(get_image(img_id), PADDED_SIZE)
-image = np.expand_dims(image, axis=0) #?
+image = np.expand_dims(image, axis=0) 
 
 # load the trained convolutional neural network and the label
 # binarizer
