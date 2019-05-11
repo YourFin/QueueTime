@@ -55,11 +55,11 @@ def gen_training_tensor(coco, bounding_box_count, cell_width, cell_height, img_i
 
     # Position of the various training parameters along the last dimension
     # of the output data from the neural network
+    POS_OBJ_LIKELYHOOD = 0
     POS_BOX_CENTER_X = 1
     POS_BOX_CENTER_Y = 2
     POS_BOX_WIDTH = 3
     POS_BOX_HEIGHT = 4
-    POS_OBJ_LIKELYHOOD = 0
 
     annotations = get_image_annotations(coco, img_id)
 

@@ -24,7 +24,7 @@ from math import floor
 # Practica:
 #  As an example of coloring by likelyhood:
 #  # Assume $output is the output of the NN
-#  anns = annotations_from_output(output)
+#  anns = cnn_y_to_absolute(output)
 #  for ann in anns:
 #    ann['color'] = plt.cm.jet(ann['likelyhood'])
 #  plot_annotations(img_id, anns)
@@ -64,7 +64,7 @@ def get_image_annotations(coco, img_id):
     return coco.loadAnns(annotation_ids)
 
 # Procedure:
-#  annotations_from_output
+#  cnn_y_to_absolute
 # Purpose:
 #  To generate absolute coordinate annotation data from the neural network output
 # Paramaters:
@@ -85,14 +85,15 @@ def get_image_annotations(coco, img_id):
 #    height *= cell_height
 #   Transform coordinates back to coco style list as (x_pos, y_pos,width, height)
 #   likelyhood key contains calculated likelyhood of the bounding box
-def annotations_from_output(cell_width, cell_height, output_data):
+def cnn_y_to_absolute(cell_width, cell_height, output_data):
     # Need to lift into upper file
+    POS_OBJ_LIKELYHOOD = 0
     POS_BOX_CENTER_X = 1
     POS_BOX_CENTER_Y = 2
     POS_BOX_WIDTH = 3
     POS_BOX_HEIGHT = 4
-    POS_OBJ_LIKELYHOOD = 0
-    (x_cells, y_cells, channels) = output_data.shape
+    (cell_row, cell_row, channels) = output_data.shape
+    assert()
 
     bounding_boxes = []
 
