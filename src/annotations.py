@@ -98,7 +98,7 @@ def cnn_y_to_absolute(cell_width, cell_height, output_data):
     bounding_boxes = []
 
     for x_cell in range(cell_row):
-        for y_cell in range(cell_columns):
+        for y_cell in range(cell_column):
             for box_num in range(floor(channels / 5)):
                 rel_width = output_data[x_cell, y_cell, box_num * 5 + POS_BOX_WIDTH]
                 rel_height = output_data[x_cell, y_cell, box_num * 5 + POS_BOX_HEIGHT]
