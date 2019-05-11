@@ -11,6 +11,8 @@ import numpy as np
 import argparse
 from file_management import get_image
 from annotations import cnn_y_to_absolute, plot_annotations
+from QueueTimeNet import QueueTime_loss
+from keras.utils.generic_utils import get_custom_objects
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -31,6 +33,7 @@ image = get_image(img_id)
 # binarizer
 print("[INFO] loading network...")
 model = load_model(args["model"])
+get_custom_objects.update({"QueueTime_loss": QueueTime_loss})
 # lb = pickle.loads(open(args["labelbin"], "rb").read())
 
 # classify the input image
