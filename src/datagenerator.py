@@ -95,7 +95,10 @@ class DataGenerator(keras.utils.Sequence, ABC):
             widths and heights to their respective coordinates
          2. Find the upper right and lower left corners of the rectangle that
             forms their intersection. The former is done by finding the further
-            of the two upper left corners from the origin in both directions
+            of the two upper left corners from the origin in both directions,
+            and using said further number. Same goes for the bottom right,
+            instead using the closer of them
+         3. Calculate the widths and heights from this, return their product
         """
         rect1_br = (rect1_ul[0] + self.rect1_dims[0], rect1_ul[1] + self.rect1_dims[1])
         rect2_br = (rect2_ul[0] + self.rect2_dims[0], rect2_ul[1] + self.rect2_dims[1])
