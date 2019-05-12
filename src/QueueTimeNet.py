@@ -182,32 +182,32 @@ def QueueTime_loss(y_true, y_pred): # should be a BS * CELL_ROW * CELL_COL * 5 t
 	wh_loss = coord * indicator*(w_loss+h_loss)
 
     ### adjust x and y      
-    pred_box_xy = y_pred[..., 1:3]
-    pred_box_wh = y_pred[..., 3:5]
-    true_box_xy = y_true[..., 1:3] # relative position to the containing cell
-    true_box_wh = y_true[..., 3:5] # number of cells accross, horizontally and vertically
+	pred_box_xy = y_pred[..., 1:3]
+	pred_box_wh = y_pred[..., 3:5]
+	true_box_xy = y_true[..., 1:3] # relative position to the containing cell
+	true_box_wh = y_true[..., 3:5] # number of cells accross, horizontally and vertically
         
 	### adjust confidence
-    true_wh_half = true_box_wh / 2.
-    true_mins    = true_box_xy - true_wh_half
-    true_maxes   = true_box_xy + true_wh_half
-        
-    pred_wh_half = pred_box_wh / 2.
-    pred_mins    = pred_box_xy - pred_wh_half
-    pred_maxes   = pred_box_xy + pred_wh_half       
-        
-    intersect_mins  = tf.maximum(pred_mins,  true_mins)
-    intersect_maxes = tf.minimum(pred_maxes, true_maxes)
-    intersect_wh    = tf.maximum(intersect_maxes - intersect_mins, 0.)
-    intersect_areas = intersect_wh[..., 0] * intersect_wh[..., 1]
-        
-    true_areas = true_box_wh[..., 0] * true_box_wh[..., 1]
-    pred_areas = pred_box_wh[..., 0] * pred_box_wh[..., 1]
+	true_wh_half = true_box_wh / 2.
+	true_mins    = true_box_xy - true_wh_half
+	true_maxes   = true_box_xy + true_wh_half
 
-    union_areas = pred_areas + true_areas - intersect_areas
-    iou_scores  = tf.truediv(intersect_areas, union_areas)
-        
-    true_box_conf = iou_scores * y_true[..., 0]
+	pred_wh_half = pred_box_wh / 2.
+	pred_mins    = pred_box_xy - pred_wh_half
+	pred_maxes   = pred_box_xy + pred_wh_half       
+
+	intersect_mins  = tf.maximum(pred_mins,  true_mins)
+	intersect_maxes = tf.minimum(pred_maxes, true_maxes)
+	intersect_wh    = tf.maximum(intersect_maxes - intersect_mins, 0.)
+	intersect_areas = intersect_wh[..., 0] * intersect_wh[..., 1]
+
+	true_areas = true_box_wh[..., 0] * true_box_wh[..., 1]
+	pred_areas = pred_box_wh[..., 0] * pred_box_wh[..., 1]
+
+	union_areas = pred_areas + true_areas - intersect_areas
+	iou_scores  = tf.truediv(intersect_areas, union_areas)
+		
+	true_box_conf = iou_scores * y_true[..., 0]
 
 
 	pr_loss_pos = indicator * K.square(true_box_conf - y_pred[...,0])
