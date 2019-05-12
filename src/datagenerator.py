@@ -195,7 +195,8 @@ class DataGenerator(keras.utils.Sequence, ABC):
             assert intersection_area > 0, "human box bounding box does not intersect with expected cell"
             cell_area = self.cell_width * self.cell_height
             confidence = cell_area / intersection_area
-            training_data[cell_y_pos, cell_x_pos, self.POS_SCORE] = self.HAS_OBJECT_WEIGHT
+            if confidence > self.intersection_threshold:
+                training_data[cell_y_pos, cell_x_pos, self.POS_SCORE] = self.HAS_OBJECT_WEIGHT
         return training_data
 
     def __getitem__(self, index):
@@ -207,3 +208,4 @@ class DataGenerator(keras.utils.Sequence, ABC):
         Parameters: - note that this matches python standards for generators
          index: int - the batch number from the epoch to take
         """
+        raise NotImplementedError
