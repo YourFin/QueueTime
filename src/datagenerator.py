@@ -13,17 +13,6 @@ class DataGenerator(keras.utils.Sequence, ABC):
     img_width: final width of the imgs as passed out
     img_height: final height of the imgs
     """
-<<<<<<< HEAD
-    def __init__(
-            self,
-            img_width,
-            img_height,
-            cell_size,
-            img_ids,
-            bounding_box_count=1,
-            intersection_threshold=0.7,
-            batch_size=20
-=======
     def __init__(self,
                  img_width,
                  img_height,
@@ -33,7 +22,6 @@ class DataGenerator(keras.utils.Sequence, ABC):
                  bounding_box_count=1,
                  intersection_threshold=0.7
                  batch_size=20,
->>>>>>> bac64e44839401c56200ca8560e4e320b9e125a6
     ):
         self.img_width = img_width
         self.img_height = img_height
