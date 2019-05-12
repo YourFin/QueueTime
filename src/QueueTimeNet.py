@@ -169,25 +169,28 @@ def QueueTime_loss(y_true, y_pred): # should be a BS * CELL_ROW * CELL_COL * 5 t
 	print("[INFO] ytrue", y_true)
 	print("[INFO] ypred", y_pred)
 
-	coord = 100
-	noobj = 0.1
+	coord = 5
+	noobj = 0.5
 
-	indicator = y_true[...,0]
+	indicator = y_true[...,POS_SCORE]
+	# center_cell_mask = y_true[...,POS_BOX_CENTER_X] >= 0 and y_true[...,POS_BOX_CENTER_X] <= 1 and y_true[...,POS_BOX_CENTER_Y] >= 0 and y_true[...,POS_BOX_CENTER_Y] <= 1
+	
+	
 	print("[INFO] indicator", indicator)
-	x_loss = K.square(y_true[...,1] - y_pred[...,1]) 
+	x_loss = K.square(y_true[...,POS_BOX_CENTER_X] - y_pred[...,POS_BOX_CENTER_X]) 
 	# print("[INFO] x loss", x_loss.eval())
-	y_loss = K.square(y_true[...,2] - y_pred[...,2])
+	y_loss = K.square(y_true[...,POS_BOX_CENTER_Y] - y_pred[...,POS_BOX_CENTER_Y])
 	# print("[INFO] y loss", y_loss.eval())
 	xy_loss = coord * indicator * (y_loss+x_loss)
 	# print("[INFO] xy_loss", xy_loss.eval())
 
 
-	w_loss = K.square(K.sqrt(y_true[...,3]) - K.sqrt(y_pred[...,3]))
-	h_loss = K.square(K.sqrt(y_true[...,4]) - K.sqrt(y_pred[...,4]))
+	w_loss = K.square(K.sqrt(y_true[...,POS_BOX_WIDTH]) - K.sqrt(y_pred[...,POS_BOX_WIDTH]))
+	h_loss = K.square(K.sqrt(y_true[...,POS_BOX_HEIGHT]) - K.sqrt(y_pred[...,POS_BOX_HEIGHT]))
 	wh_loss = coord * indicator*(w_loss+h_loss)
 
-	pr_loss_pos = 0 #indicator * K.square(indicator - y_pred[...,0])
-	pr_loss_neg = 0 #noobj*(1-indicator) * K.square(indicator - y_pred[...,0])
+	pr_loss_pos = indicator * K.square(indicator - y_pred[...,0])
+	pr_loss_neg = noobj*(1-indicator) * K.square(indicator - y_pred[...,0])
 
 	# m = K.int_shape(y_true)
 	# print("[INFO] y_true is ", y_true, ",m is ", m, "xy_loss is", xy_loss[0])
