@@ -221,8 +221,10 @@ def QueueTime_loss(y_true, y_pred): # should be a BS * CELL_ROW * CELL_COL * 5 t
 
 
 	loss = (xy_loss+wh_loss+pr_loss_neg+pr_loss_pos)/16 #hard code BS now
-	print("[INFO] loss", loss)
-	return K.sum(K.sum(loss,0), 0, True)
+
+	real_loss = K.sum(K.sum(K.sum(loss,0), 0), 0, True)
+	print("[INFO] real_loss", real_loss)
+	return real_loss
 	
 
 # get rid of the duplicates using non-max suppression. also filter out the boxes
