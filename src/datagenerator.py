@@ -3,6 +3,8 @@ import numpy as np
 from abc import ABC, abstractmethod
 from math import ceil, floor
 
+from QueueTimeNet import POS_SCORE, POS_BOX_CENTER_X, POS_BOX_CENTER_Y, POS_BOX_WIDTH, POS_BOX_HEIGHT
+
 # Help from https://stanford.edu/~shervine/blog/keras-how-to-generate-data-on-the-fly
 # in this file
 
@@ -11,6 +13,7 @@ class DataGenerator(keras.utils.Sequence, ABC):
     img_width: final width of the imgs as passed out
     img_height: final height of the imgs
     """
+<<<<<<< HEAD
     def __init__(
             self,
             img_width,
@@ -20,11 +23,22 @@ class DataGenerator(keras.utils.Sequence, ABC):
             bounding_box_count=1,
             intersection_threshold=0.7,
             batch_size=20
+=======
+    def __init__(self,
+                 img_width,
+                 img_height,
+                 cell_height,
+                 cell_width,
+                 img_ids,
+                 bounding_box_count=1,
+                 intersection_threshold=0.7
+                 batch_size=20,
+>>>>>>> bac64e44839401c56200ca8560e4e320b9e125a6
     ):
         self.img_width = img_width
         self.img_height = img_height
-        self.cell_width = cell_size
-        self.cell_height = cell_size
+        self.cell_width = cell_width
+        self.cell_height = cell_height
         self.bounding_box_count = bounding_box_count
         self.img_ids = img_ids
         self.intersection_threshold = intersection_threshold
@@ -34,14 +48,6 @@ class DataGenerator(keras.utils.Sequence, ABC):
         self.DEFAULT_LOCATION = 0
         self.NO_OBJECT_WEIGHT = 0
         self.HAS_OBJECT_WEIGHT = 1
-
-        # Position of the various training parameters along the last dimension
-        # of the output data from the neural network
-        self.POS_SCORE = 0
-        self.POS_BOX_CENTER_X = 1
-        self.POS_BOX_CENTER_Y = 2
-        self.POS_BOX_WIDTH = 3
-        self.POS_BOX_HEIGHT = 4
 
     def __len__(self):
         'Number of batches per epoch'
