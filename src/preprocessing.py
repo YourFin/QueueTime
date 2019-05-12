@@ -116,13 +116,76 @@ def gen_training_tensor(coco, bounding_box_count, cell_width_px, cell_height_px,
                 cell_y_pos
             ))
 
+        intersection_threshold = 0.7
         # Set values for the training data
         training_data[cell_y_pos, cell_x_pos, POS_BOX_CENTER_X] = rel_center_x
         training_data[cell_y_pos, cell_x_pos, POS_BOX_CENTER_Y] = rel_center_y
         training_data[cell_y_pos, cell_x_pos, POS_BOX_WIDTH] = rel_width
         training_data[cell_y_pos, cell_x_pos, POS_BOX_HEIGHT] = rel_height
-        training_data[cell_y_pos, cell_x_pos, POS_OBJ_SCORE] = HAS_OBJECT_WEIGHT
+        if (rel_height*rel_width > intersection_threshold):
+            training_data[cell_y_pos, cell_x_pos, POS_OBJ_SCORE] = HAS_OBJECT_WEIGHT
         # print("[DEBUG]", training_data[cell_y_pos, cell_x_pos, :])
+
+        # find the boundings revative to cell_y_pos, cell_x_pos
+        x1 = rel_center_x - rel_width / 2  
+        x2 = rel_center_x + rel_width / 2
+        y1 = rel_center_y - rel_height / 2
+        y2 = rel_center_y + rel_height / 2
+        
+        left_full_x = ceil(x1)
+        right_part_x = floor(x2)
+        up_full_y = ceil(y1)
+        bottom_part_y = floor(y2)
+
+        # full cells first
+        if (right_part_x > left_full_x): # there are full coverage cells on x direction
+            if (bottom_part_y > up_full_y): #there are full coverage cells on y direction
+                for x in range(left_full_x, right_part_x): #inclusive, exclusive 
+                    for y in range(up_full_y:bottom_part_y): 
+                        # only set the score, x y w h don't matter in the loss
+                        training_data[cell_y_pos + y, cell_x_pos + x, self.POS_SCORE] = self.HAS_OBJECT_WEIGHT
+        
+        # border cells
+        left_part_x = left_full_x - 1
+        up_part_y = up_full_y - 1
+        left_margin = left_full_x - x1
+        right_margin = x2 - right_part_x 
+        up_margin = up_full_y - y1
+        bottom_margin = y2 - bottom_full_y
+
+        if left_margin > self.intersection_threshold:
+            for y in range(up_full_y:bottom_part_y): 
+                # only set the score, x y w h don't matter in the loss
+                training_data[ cell_y_pos + y, left_part_x, self.POS_SCORE] = max(training_data[cell_y_pos + y, left_part_x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+                
+            
+        if right_margin > self.intersection_threshold: 
+            for y in range(up_full_y:bottom_part_y): 
+                # only set the score, x y w h don't matter in the loss
+                training_data[cell_y_pos + y, right_part_x, self.POS_SCORE] = max(training_data[cell_y_pos + y, right_part_x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+                
+        if up_margin > self.intersection_threshold:
+            for x in range(left_full_x, right_part_x): 
+                # only set the score, x y w h don't matter in the loss
+                training_data[up_part_y, cell_x_pos + x, self.POS_SCORE] = max(training_data[up_part_y, left_part_x + x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+                
+        if bottom_margin > self.intersection_threshold:
+            for x in range(left_full_x, right_part_x): 
+                # only set the score, x y w h don't matter in the loss
+                training_data[bottom_part_y, cell_x_pos + x, self.POS_SCORE] = max(training_data[bottom_part_y, cell_x_pos + x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+                
+        if left_margin*up_margin  > self.intersection_threshold: 
+            training_data[up_part_y, left_part_x, self.POS_SCORE] = max(training_data[up_part_y, left_part_x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+
+        if left_margin*bottom_margin  > self.intersection_threshold: 
+            training_data[bottom_part_y, left_part_x, self.POS_SCORE] = max(training_data[bottom_part_y, left_part_x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+
+        if right_margin*bottom_margin  > self.intersection_threshold: 
+            training_data[bottom_part_y, right_part_x, self.POS_SCORE] = max(training_data[bottom_part_y, right_part_x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+
+        if right_margin*up_margin  > self.intersection_threshold: 
+            training_data[up_part_y, right_part_x, self.POS_SCORE] = max(training_data[up_part_y, right_part_x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+
     return training_data
 
 # Procedure:

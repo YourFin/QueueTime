@@ -13,17 +13,6 @@ class DataGenerator(keras.utils.Sequence, ABC):
     img_width: final width of the imgs as passed out
     img_height: final height of the imgs
     """
-<<<<<<< HEAD
-    def __init__(
-            self,
-            img_width,
-            img_height,
-            cell_size,
-            img_ids,
-            bounding_box_count=1,
-            intersection_threshold=0.7,
-            batch_size=20
-=======
     def __init__(self,
                  img_width,
                  img_height,
@@ -33,7 +22,6 @@ class DataGenerator(keras.utils.Sequence, ABC):
                  bounding_box_count=1,
                  intersection_threshold=0.7
                  batch_size=20,
->>>>>>> bac64e44839401c56200ca8560e4e320b9e125a6
     ):
         self.img_width = img_width
         self.img_height = img_height
@@ -151,7 +139,7 @@ class DataGenerator(keras.utils.Sequence, ABC):
         training_data = training_data.astype('float32')
         # Set all object probabilities to NO_OBJECT_WEIGHT
         if self.DEFAULT_LOCATION != self.NO_OBJECT_WEIGHT:
-            training_data[..., ..., 4: :5] = self.NO_OBJECT_WEIGHT
+            training_data[..., ..., POS_SCORE: :5] = self.NO_OBJECT_WEIGHT
 
         for annotation in annotations:
             # Calculate the cell that the annotation should match
@@ -181,7 +169,6 @@ class DataGenerator(keras.utils.Sequence, ABC):
             rel_width = width / self.cell_width
             rel_height = height / self.cell_height
 
-            # TODO: Move to handling more than one bounding box
             if training_data[cell_y_pos, cell_x_pos, self.POS_SCORE] != self.NO_OBJECT_WEIGHT:
                 logging.warn("Image %d has multiple bounding boxes in cell (%d,%d)" % (
                     img_id,
@@ -195,18 +182,66 @@ class DataGenerator(keras.utils.Sequence, ABC):
             training_data[cell_y_pos, cell_x_pos, self.POS_BOX_WIDTH] = rel_width
             training_data[cell_y_pos, cell_x_pos, self.POS_BOX_HEIGHT] = rel_height
 
-            ### Calculate whether or not the score should be one
-            # Find the upper left and bottom right corners of the cell
-            cell_ul = (cell_x_pos * self.cell_width, cell_y_pos * self.cell_height)
-            intersection_area = DataGenerator._intersecion_area(
-                cell_ul, (self.cell_width, self.cell_height),
-                (abs_ul_x, abs_ul_y), (width, height)
-            )
-            assert intersection_area > 0, "human box bounding box does not intersect with expected cell"
-            cell_area = self.cell_width * self.cell_height
-            confidence = cell_area / intersection_area
-            if confidence > self.intersection_threshold:
-                training_data[cell_y_pos, cell_x_pos, self.POS_SCORE] = self.HAS_OBJECT_WEIGHT
+            # find the boundings revative to cell_y_pos, cell_x_pos
+            x1 = rel_center_x - rel_width / 2  
+            x2 = rel_center_x + rel_width / 2
+            y1 = rel_center_y - rel_height / 2
+            y2 = rel_center_y + rel_height / 2
+            
+            left_full_x = ceil(x1)
+            right_part_x = floor(x2)
+            up_full_y = ceil(y1)
+            bottom_part_y = floor(y2)
+
+            # full cells first
+            if (right_part_x > left_full_x): # there are full coverage cells on x direction
+                if (bottom_part_y > up_full_y): #there are full coverage cells on y direction
+                    for x in range(left_full_x, right_part_x): #inclusive, exclusive 
+                        for y in range(up_full_y:bottom_part_y): 
+                            # only set the score, x y w h don't matter in the loss
+                            training_data[cell_y_pos + y, cell_x_pos + x, self.POS_SCORE] = self.HAS_OBJECT_WEIGHT
+            
+            # border cells
+            left_part_x = left_full_x - 1
+            up_part_y = up_full_y - 1
+            left_margin = left_full_x - x1
+            right_margin = x2 - right_part_x 
+            up_margin = up_full_y - y1
+            bottom_margin = y2 - bottom_full_y
+
+            if left_margin > self.intersection_threshold:
+                for y in range(up_full_y:bottom_part_y): 
+                    # only set the score, x y w h don't matter in the loss
+                    training_data[ cell_y_pos + y, left_part_x, self.POS_SCORE] = max(training_data[cell_y_pos + y, left_part_x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+                    
+                
+            if right_margin > self.intersection_threshold: 
+                for y in range(up_full_y:bottom_part_y): 
+                    # only set the score, x y w h don't matter in the loss
+                    training_data[cell_y_pos + y, right_part_x, self.POS_SCORE] = max(training_data[cell_y_pos + y, right_part_x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+                    
+            if up_margin > self.intersection_threshold:
+                for x in range(left_full_x, right_part_x): 
+                    # only set the score, x y w h don't matter in the loss
+                    training_data[up_part_y, cell_x_pos + x, self.POS_SCORE] = max(training_data[up_part_y, left_part_x + x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+                    
+            if bottom_margin > self.intersection_threshold:
+                for x in range(left_full_x, right_part_x): 
+                    # only set the score, x y w h don't matter in the loss
+                    training_data[bottom_part_y, cell_x_pos + x, self.POS_SCORE] = max(training_data[bottom_part_y, cell_x_pos + x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+                    
+            if left_margin*up_margin  > self.intersection_threshold: 
+                training_data[up_part_y, left_part_x, self.POS_SCORE] = max(training_data[up_part_y, left_part_x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+
+            if left_margin*bottom_margin  > self.intersection_threshold: 
+                training_data[bottom_part_y, left_part_x, self.POS_SCORE] = max(training_data[bottom_part_y, left_part_x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+
+            if right_margin*bottom_margin  > self.intersection_threshold: 
+                training_data[bottom_part_y, right_part_x, self.POS_SCORE] = max(training_data[bottom_part_y, right_part_x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+
+            if right_margin*up_margin  > self.intersection_threshold: 
+                training_data[up_part_y, right_part_x, self.POS_SCORE] = max(training_data[up_part_y, right_part_x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+
         return training_data
 
     def __getitem__(self, index):
