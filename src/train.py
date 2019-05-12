@@ -1,8 +1,8 @@
 # This code is adapted from
 # https://www.pyimagesearch.com/2018/04/16/keras-and-convolutional-neural-networks-cnns/
 
-DATA_SIZE = 500 #out of 64115
-EPOCHS = 20
+# DATA_SIZE = 500 #out of 64115
+# EPOCHS = 20
 INIT_LR = 1e-2   #learning_rate
 BS = 16
 IMAGE_DIMS = (640, 640, 3)
@@ -51,6 +51,7 @@ if __name__ == '__main__':
     # ap.add_argument("-l", "--labelbin", required=True,
     # 	help="path to output label binarizer")
     ap.add_argument("-i", "--image_count", type=int, default=800)
+    ap.add_argument("-e", "--epoch", type=int, default=10)
     ap.add_argument("-p", "--plot", type=str, default="plot.png",
                     help="path to output accuracy/loss plot")
     args = vars(ap.parse_args())
@@ -115,7 +116,7 @@ if __name__ == '__main__':
         # aug.flow(trainX, trainY, batch_size=BS),
         # validation_data=(testX, testY),
         steps_per_epoch=args["image_count"] // BS,
-        epochs=EPOCHS, verbose=1)
+        epochs=args["epoch"], verbose=1)
 
     # save the model to disk
     print("[INFO] serializing network...")
