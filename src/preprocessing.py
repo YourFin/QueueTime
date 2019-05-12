@@ -141,7 +141,7 @@ def gen_training_tensor(coco, bounding_box_count, cell_width_px, cell_height_px,
         if (right_part_x > left_full_x): # there are full coverage cells on x direction
             if (bottom_part_y > up_full_y): #there are full coverage cells on y direction
                 for x in range(left_full_x, right_part_x): #inclusive, exclusive 
-                    for y in range(up_full_y:bottom_part_y): 
+                    for y in range(up_full_y,bottom_part_y): 
                         # only set the score, x y w h don't matter in the loss
                         training_data[cell_y_pos + y, cell_x_pos + x, self.POS_SCORE] = self.HAS_OBJECT_WEIGHT
         
@@ -154,13 +154,13 @@ def gen_training_tensor(coco, bounding_box_count, cell_width_px, cell_height_px,
         bottom_margin = y2 - bottom_full_y
 
         if left_margin > self.intersection_threshold:
-            for y in range(up_full_y:bottom_part_y): 
+            for y in range(up_full_y,bottom_part_y): 
                 # only set the score, x y w h don't matter in the loss
                 training_data[ cell_y_pos + y, left_part_x, self.POS_SCORE] = max(training_data[cell_y_pos + y, left_part_x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
                 
             
         if right_margin > self.intersection_threshold: 
-            for y in range(up_full_y:bottom_part_y): 
+            for y in range(up_full_y,bottom_part_y): 
                 # only set the score, x y w h don't matter in the loss
                 training_data[cell_y_pos + y, right_part_x, self.POS_SCORE] = max(training_data[cell_y_pos + y, right_part_x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
                 
