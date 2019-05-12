@@ -262,8 +262,8 @@ def training_data_generator(
     img_ids = list(filter(is_not_greyscale, img_ids))[:num_images]
     while 1:
         for img_id in img_ids:
-            image_batch = np.empty((batch_size,640, 640, 3)) #hard code
-            y_true_batch = np.empty((batch_size,10,10,5)) #hard code
+            image_batch = np.empty((batch_size,640, 640, 3), np.float) #hard code
+            y_true_batch = np.empty((batch_size,10,10,5), np.float) #hard code
             for i in range(batch_size): 
                 image = file_management.get_image(img_id)
                 image = np.divide(image, 256, dtype=np.float32)
@@ -279,8 +279,8 @@ def training_data_generator(
                     cell_height_px,
                     img_id
                 )
-                image_batch(i,...) = image
-                y_true_batch(i,...) = ground_truth
+                image_batch[i,...] = image
+                y_true_batch[i,...] = ground_truth
 
 
             yield (image_batch, y_true_batch)
