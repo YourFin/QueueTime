@@ -56,6 +56,8 @@ if __name__ == '__main__':
                     help="path to output accuracy/loss plot")
     args = vars(ap.parse_args())
 
+    EPOCHS = args["epoch"]
+
     # initialize the number of epochs to train for, initial learning rate,
     # batch size, and image dimensions
 
