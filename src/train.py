@@ -4,7 +4,7 @@
 # DATA_SIZE = 500 #out of 64115
 # EPOCHS = 20
 INIT_LR = 1e-2   #learning_rate
-BS = 16
+BS = 32
 IMAGE_DIMS = (640, 640, 3)
 CELL_ROW = 10
 CELL_COL = 10
