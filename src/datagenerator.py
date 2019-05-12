@@ -11,14 +11,15 @@ class DataGenerator(keras.utils.Sequence, ABC):
     img_width: final width of the imgs as passed out
     img_height: final height of the imgs
     """
-    def __init__(self,
-                 img_width,
-                 img_height,
-                 cell_size,
-                 img_ids,
-                 bounding_box_count=1,
-                 intersection_threshold=0.7
-                 batch_size=20,
+    def __init__(
+            self,
+            img_width,
+            img_height,
+            cell_size,
+            img_ids,
+            bounding_box_count=1,
+            intersection_threshold=0.7,
+            batch_size=20
     ):
         self.img_width = img_width
         self.img_height = img_height
@@ -26,6 +27,7 @@ class DataGenerator(keras.utils.Sequence, ABC):
         self.cell_height = cell_size
         self.bounding_box_count = bounding_box_count
         self.img_ids = img_ids
+        self.intersection_threshold = intersection_threshold
 
         self.PADDED_SIZE = 640
 
@@ -89,7 +91,7 @@ class DataGenerator(keras.utils.Sequence, ABC):
         Preconditions:
          No additional
         Postconditions:
-         No additional
+         If the boxes do not intersect, return 0 as the intersection
         Implementation:
          1. Find the bottom right portion of both rectangles by adding the
             widths and heights to their respective coordinates
@@ -98,10 +100,12 @@ class DataGenerator(keras.utils.Sequence, ABC):
             of the two upper left corners from the origin in both directions,
             and using said further number. Same goes for the bottom right,
             instead using the closer of them
-         3. Calculate the widths and heights from this, return their product
+         3. Calculate the widths and heights from this. If either are
+            negitive, pin them to 0 so that the product will be zero.
+         43 Return the product of the width and height
         """
-        rect1_br = (rect1_ul[0] + self.rect1_dims[0], rect1_ul[1] + self.rect1_dims[1])
-        rect2_br = (rect2_ul[0] + self.rect2_dims[0], rect2_ul[1] + self.rect2_dims[1])
+        rect1_br = (rect1_ul[0] + rect1_dims[0], rect1_ul[1] + rect1_dims[1])
+        rect2_br = (rect2_ul[0] + rect2_dims[0], rect2_ul[1] + rect2_dims[1])
 
         # find the upper right corner of their intersection:
         intersection_ul = (max(rect1_ul[0], rect2_ul[0]), max(rect1_ul[1], rect2_ul[1]))
@@ -188,7 +192,7 @@ class DataGenerator(keras.utils.Sequence, ABC):
             ### Calculate whether or not the score should be one
             # Find the upper left and bottom right corners of the cell
             cell_ul = (cell_x_pos * self.cell_width, cell_y_pos * self.cell_height)
-            intersection_area = self._intersecion_area(
+            intersection_area = DataGenerator._intersecion_area(
                 cell_ul, (self.cell_width, self.cell_height),
                 (abs_ul_x, abs_ul_y), (width, height)
             )
@@ -209,3 +213,25 @@ class DataGenerator(keras.utils.Sequence, ABC):
          index: int - the batch number from the epoch to take
         """
         raise NotImplementedError
+
+from file_management import get_downloaded_ids, get_image, ANNOTATION_FILE
+from pycocotools.coco import COCO
+from annotations import get_image_annotations
+
+class CocoDataGenerator(DataGenerator):
+    def __init__(
+            self,
+            img_width,
+            img_height,
+            cell_size
+    ):
+        self.coco = COCO(ANNOTATION_FILE)
+        super().__init__(img_width, img_height, cell_size, get_downloaded_ids())
+
+    # Override
+    def get_img(self, img_id):
+        return get_image(img_id)
+
+    # Override
+    def get_annotations(self, img_id):
+        return get_image_annotations(self.coco, img_id)
