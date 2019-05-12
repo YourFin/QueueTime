@@ -107,8 +107,8 @@ class DataGenerator(keras.utils.Sequence, ABC):
         intersection_ul = (max(rect1_ul[0], rect2_ul[0]), max(rect1_ul[1], rect2_ul[1]))
         intersection_br = (min(rect1_br[0], rect2_br[0]), min(rect1_br[1], rect2_br[1]))
 
-        intersection_width = intersection_br[0] - intersection_ul[0]
-        intersection_height = intersection_br[1] - intersection_ul[1]
+        intersection_width = max(0,intersection_br[0] - intersection_ul[0])
+        intersection_height = max(0,intersection_br[1] - intersection_ul[1])
 
         return intersection_width * intersection_height
 
@@ -192,9 +192,9 @@ class DataGenerator(keras.utils.Sequence, ABC):
                 cell_ul, (self.cell_width, self.cell_height),
                 (abs_ul_x, abs_ul_y), (width, height)
             )
-            assert intersection_area > 0, "human box does not intersect with cell"
-
-            #TODO
+            assert intersection_area > 0, "human box bounding box does not intersect with expected cell"
+            cell_area = self.cell_width * self.cell_height
+            confidence = cell_area / intersection_area
             training_data[cell_y_pos, cell_x_pos, self.POS_SCORE] = self.HAS_OBJECT_WEIGHT
         return training_data
 
