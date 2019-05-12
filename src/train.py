@@ -4,7 +4,7 @@
 # DATA_SIZE = 500 #out of 64115
 # EPOCHS = 20
 INIT_LR = 1e-2   #learning_rate
-BS = 32
+# BS = 32
 IMAGE_DIMS = (640, 640, 3)
 CELL_ROW = 10
 CELL_COL = 10
@@ -52,11 +52,13 @@ if __name__ == '__main__':
     # 	help="path to output label binarizer")
     ap.add_argument("-i", "--image_count", type=int, default=800)
     ap.add_argument("-e", "--epoch", type=int, default=10)
+    ap.add_argument("-b", "--batch_size", type=int, default=16)
     ap.add_argument("-p", "--plot", type=str, default="plot.png",
                     help="path to output accuracy/loss plot")
     args = vars(ap.parse_args())
 
     EPOCHS = args["epoch"]
+    BS = args["batch_size"]
 
     # initialize the number of epochs to train for, initial learning rate,
     # batch size, and image dimensions
