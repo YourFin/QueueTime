@@ -123,7 +123,7 @@ def get_y_true(coco, bounding_box_count, cell_width_px, cell_height_px, img_id):
         y_true[cell_y_pos, cell_x_pos, POS_BOX_WIDTH] = rel_width
         y_true[cell_y_pos, cell_x_pos, POS_BOX_HEIGHT] = rel_height
         if (rel_height*rel_width > intersection_threshold):
-            y_true[cell_y_pos, cell_x_pos, POS_OBJ_SCORE] = HAS_OBJECT_WEIGHT
+            y_true[cell_y_pos, cell_x_pos, POS_SCORE] = HAS_OBJECT_WEIGHT
         # print("[DEBUG]", y_true[cell_y_pos, cell_x_pos, :])
 
         # find the boundings revative to cell_y_pos, cell_x_pos

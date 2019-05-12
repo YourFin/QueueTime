@@ -20,16 +20,12 @@ from keras import backend as K
 from annotations import cnn_y_to_absolute
 
 
-<<<<<<< HEAD
 POS_SCORE = 0
 POS_BOX_CENTER_X = 1
 POS_BOX_CENTER_Y = 2
 POS_BOX_WIDTH = 3
 POS_BOX_HEIGHT = 4
 
-=======
-# should output a 10*10*5 tensor
->>>>>>> master
 def build(width, height, depth, classes):
 	# initialize the model along with the input shape to be
 	# "channels last" and the channels dimension itself
