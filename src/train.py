@@ -114,7 +114,7 @@ if __name__ == '__main__':
     # train the network
     print("[INFO] training network...")
     H = model.fit_generator(
-        training_data_generator(coco, args["image_count"], 1, CELL_WIDTH, CELL_HEIGHT),
+        training_data_generator(coco, args["image_count"], 1, CELL_WIDTH, CELL_HEIGHT, BS),
         # aug.flow(trainX, trainY, batch_size=BS),
         # validation_data=(testX, testY),
         steps_per_epoch=args["image_count"] // BS,
