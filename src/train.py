@@ -1,15 +1,15 @@
 # This code is adapted from
 # https://www.pyimagesearch.com/2018/04/16/keras-and-convolutional-neural-networks-cnns/
 
-DATA_SIZE = 64115
-EPOCHS = 75
-INIT_LR = 1e-3   #0.01 learning_rate
+# DATA_SIZE = 500 #out of 64115
+# EPOCHS = 20
+INIT_LR = 1e-2   #learning_rate
 BS = 16
 IMAGE_DIMS = (640, 640, 3)
-CELL_ROW = 20
-CELL_COL = 20
-CELL_WIDTH = 32
-CELL_HEIGHT = 32
+CELL_ROW = 10
+CELL_COL = 10
+CELL_WIDTH = 64
+CELL_HEIGHT = 64
 BOUNDING_BOX_COUNT = 1
 NUM_CLASSES = 1
 
@@ -18,8 +18,6 @@ if __name__ == '__main__':
     # python train.py --dataset dataset --model pokedex.model --labelbin lb.pickle
 
     # # set the matplotlib backend so figures can be saved in the background
-    from preprocessing import all_imgs_numpy, all_ground_truth_numpy
-    from QueueTimeNet import build, QueueTime_loss
 
     # import the necessary packages
     import matplotlib
@@ -41,6 +39,8 @@ if __name__ == '__main__':
     from pycocotools.coco import COCO
     from file_management import ANNOTATION_FILE, get_downloaded_ids
     from annotations import get_image_annotations, plot_annotations
+    from preprocessing import all_imgs_numpy, all_ground_truth_numpy, training_data_generator
+    from QueueTimeNet import build, QueueTime_loss
 
     # construct the argument parse and parse the arguments
     ap = argparse.ArgumentParser()
@@ -50,10 +50,15 @@ if __name__ == '__main__':
                     help="path to output model")
     # ap.add_argument("-l", "--labelbin", required=True,
     # 	help="path to output label binarizer")
-    ap.add_argument("-i", "--image_count", type=int, default=500)
+    ap.add_argument("-i", "--image_count", type=int, default=800)
+    ap.add_argument("-e", "--epoch", type=int, default=10)
+    ap.add_argument("-b", "--batch_size", type=int, default=16)
     ap.add_argument("-p", "--plot", type=str, default="plot.png",
                     help="path to output accuracy/loss plot")
     args = vars(ap.parse_args())
+
+    EPOCHS = args["epoch"]
+    BS = args["batch_size"]
 
     # initialize the number of epochs to train for, initial learning rate,
     # batch size, and image dimensions
@@ -83,45 +88,39 @@ if __name__ == '__main__':
 
     coco = COCO(ANNOTATION_FILE)
 
-    labels = all_ground_truth_numpy(coco, args["image_count"], 1, CELL_WIDTH, CELL_HEIGHT)
-    data = all_imgs_numpy(args["image_count"])
+    # labels = all_ground_truth_numpy(coco, args["image_count"], 1, CELL_WIDTH, CELL_HEIGHT)
+    # data = all_imgs_numpy(args["image_count"])
 
-    # scale the raw pixel intensities to the range [0, 1]
-    # data = np.array(data, dtype="float") / 255.0
-    # labels = np.array(labels)
-    print("[INFO] data matrix: {:.2f}MB".format(
-        data.nbytes / (1024 * 1000.0)))
-
-    # binarize the labels
-    # lb = LabelBinarizer()
-    # labels = lb.fit_transform(labels)
+    # print("[INFO] data matrix: {:.2f}MB".format(
+    #     data.nbytes / (1024 * 1000.0)))
 
     # partition the data into training and testing splits using 80% of
     # the data for training and the remaining 20% for testing
-    (trainX, testX, trainY, testY) = train_test_split(data,
-                                                      labels, test_size=0.2, random_state=42)
+    # (trainX, testX, trainY, testY) = train_test_split(data,
+    #                                                   labels, test_size=0.2, random_state=42)
 
-    print("[INFO] the true size", trainX.shape)
+    # print("[INFO] the true size", trainX.shape)
 
     # construct the image generator for data augmentation
-    aug = ImageDataGenerator(rotation_range=25, width_shift_range=0.1,
-                             height_shift_range=0.1, shear_range=0.2, zoom_range=0.2,
-                             horizontal_flip=True, fill_mode="nearest")
+    # aug = ImageDataGenerator(rotation_range=25, width_shift_range=0.1,
+    #                          height_shift_range=0.1, shear_range=0.2, zoom_range=0.2,
+    #                          horizontal_flip=True, fill_mode="nearest")
 
     # initialize the model
     print("[INFO] compiling model...")
     model = build(width=IMAGE_DIMS[1], height=IMAGE_DIMS[0],
                   depth=IMAGE_DIMS[2], classes=NUM_CLASSES)
     opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
-    model.compile(loss=QueueTime_loss, optimizer=opt) # not sure about the metrics, decided later
+    model.compile(loss=QueueTime_loss, optimizer=opt, metrics=["accuracy"]) # not sure about the metrics, decided later
 
     # train the network
     print("[INFO] training network...")
     H = model.fit_generator(
-        aug.flow(trainX, trainY, batch_size=BS),
-        validation_data=(testX, testY),
-        steps_per_epoch=len(trainX) // BS, 
-        epochs=EPOCHS, verbose=1)
+        training_data_generator(coco, args["image_count"], 1, CELL_WIDTH, CELL_HEIGHT, BS),
+        # aug.flow(trainX, trainY, batch_size=BS),
+        # validation_data=(testX, testY),
+        steps_per_epoch=args["image_count"] // BS,
+        epochs=args["epoch"], verbose=1)
 
     # save the model to disk
     print("[INFO] serializing network...")

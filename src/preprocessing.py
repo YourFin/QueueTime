@@ -29,7 +29,7 @@ def pad_image(img, size):
     return np.pad(img, ((0, size - X_size),(0, size - Y_size), (0, 0)), 'constant')  # Default to 0
 
 # Procedure:
-#  gen_training_tensor
+#  get_y_true
 # Purpose:
 #  To generate the ground truth corresponding to a given image.
 # Parameters:
@@ -40,13 +40,13 @@ def pad_image(img, size):
 #  cell_height_px: int - the height in pixels of a cell in the image.
 #  img_id: id - id for the image
 # Produces:
-#  output: tensor[double] - A tensor of training data
+#  output: a numpy arr: cell_y_count * cell_x_count * 5
 # Preconditions:
 #  coco is initialized with valid data
 #  cell_width_px < width of image
 #  cell_height_px < height of image
 #  bounding_box_count >= 1
-def gen_training_tensor(coco, bounding_box_count, cell_width_px, cell_height_px, img_id):
+def get_y_true(coco, bounding_box_count, cell_width_px, cell_height_px, img_id):
     # Force bounding_box_count to 1 - See NOTE in above documentation
     bounding_box_count = 1
 
@@ -72,11 +72,11 @@ def gen_training_tensor(coco, bounding_box_count, cell_width_px, cell_height_px,
     cell_x_count = ceil(PADDED_SIZE / cell_width_px)
     cell_y_count = ceil(PADDED_SIZE / cell_height_px)
     # 5 parameters to each bounding box: Probability, X pos, Y pos, Width, Height
-    training_data = np.full((cell_y_count, cell_x_count, bounding_box_count * 5), DEFAULT_LOCATION)
-    training_data = training_data.astype('float32')
+    y_true = np.full((cell_y_count, cell_x_count, bounding_box_count * 5), DEFAULT_LOCATION)
+    y_true = y_true.astype('float32')
     # Set all object probabilities to NO_OBJECT_WEIGHT
     if DEFAULT_LOCATION != NO_OBJECT_WEIGHT:
-        training_data[..., ..., 4: :5] = NO_OBJECT_WEIGHT
+        y_true[..., ..., 4: :5] = NO_OBJECT_WEIGHT
 
     for annotation in annotations:
         # Calculate the cell that the annotation should match
@@ -109,22 +109,22 @@ def gen_training_tensor(coco, bounding_box_count, cell_width_px, cell_height_px,
         rel_height = height / cell_height_px
 
         # TODO: Move to handling more than one bounding box
-        if training_data[cell_y_pos, cell_x_pos, POS_OBJ_SCORE] != NO_OBJECT_WEIGHT:
-            logging.warn("Image %d has multiple bounding boxes in cell (%d,%d)" % (
-                img_id,
-                cell_x_pos,
-                cell_y_pos
-            ))
+        # if y_true[cell_y_pos, cell_x_pos, POS_OBJ_SCORE] != NO_OBJECT_WEIGHT:
+        #     logging.warn("Image %d has multiple bounding boxes in cell (%d,%d)" % (
+        #         img_id,
+        #         cell_x_pos,
+        #         cell_y_pos
+        #     ))
 
         intersection_threshold = 0.7
         # Set values for the training data
-        training_data[cell_y_pos, cell_x_pos, POS_BOX_CENTER_X] = rel_center_x
-        training_data[cell_y_pos, cell_x_pos, POS_BOX_CENTER_Y] = rel_center_y
-        training_data[cell_y_pos, cell_x_pos, POS_BOX_WIDTH] = rel_width
-        training_data[cell_y_pos, cell_x_pos, POS_BOX_HEIGHT] = rel_height
+        y_true[cell_y_pos, cell_x_pos, POS_BOX_CENTER_X] = rel_center_x
+        y_true[cell_y_pos, cell_x_pos, POS_BOX_CENTER_Y] = rel_center_y
+        y_true[cell_y_pos, cell_x_pos, POS_BOX_WIDTH] = rel_width
+        y_true[cell_y_pos, cell_x_pos, POS_BOX_HEIGHT] = rel_height
         if (rel_height*rel_width > intersection_threshold):
-            training_data[cell_y_pos, cell_x_pos, POS_OBJ_SCORE] = HAS_OBJECT_WEIGHT
-        # print("[DEBUG]", training_data[cell_y_pos, cell_x_pos, :])
+            y_true[cell_y_pos, cell_x_pos, POS_OBJ_SCORE] = HAS_OBJECT_WEIGHT
+        # print("[DEBUG]", y_true[cell_y_pos, cell_x_pos, :])
 
         # find the boundings revative to cell_y_pos, cell_x_pos
         x1 = rel_center_x - rel_width / 2  
@@ -143,7 +143,7 @@ def gen_training_tensor(coco, bounding_box_count, cell_width_px, cell_height_px,
                 for x in range(left_full_x, right_part_x): #inclusive, exclusive 
                     for y in range(up_full_y,bottom_part_y): 
                         # only set the score, x y w h don't matter in the loss
-                        training_data[cell_y_pos + y, cell_x_pos + x, self.POS_SCORE] = self.HAS_OBJECT_WEIGHT
+                        y_true[cell_y_pos + y, cell_x_pos + x,  POS_SCORE] =  HAS_OBJECT_WEIGHT
         
         # border cells
         left_part_x = left_full_x - 1
@@ -151,45 +151,45 @@ def gen_training_tensor(coco, bounding_box_count, cell_width_px, cell_height_px,
         left_margin = left_full_x - x1
         right_margin = x2 - right_part_x 
         up_margin = up_full_y - y1
-        bottom_margin = y2 - bottom_full_y
+        bottom_margin = y2 - bottom_part_y
 
-        if left_margin > self.intersection_threshold:
+        if left_margin >  intersection_threshold:
             for y in range(up_full_y,bottom_part_y): 
                 # only set the score, x y w h don't matter in the loss
-                training_data[ cell_y_pos + y, left_part_x, self.POS_SCORE] = max(training_data[cell_y_pos + y, left_part_x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+                y_true[ cell_y_pos + y, left_part_x,  POS_SCORE] = max(y_true[cell_y_pos + y, left_part_x,  POS_SCORE],  HAS_OBJECT_WEIGHT)
                 
             
-        if right_margin > self.intersection_threshold: 
+        if right_margin >  intersection_threshold: 
             for y in range(up_full_y,bottom_part_y): 
                 # only set the score, x y w h don't matter in the loss
-                training_data[cell_y_pos + y, right_part_x, self.POS_SCORE] = max(training_data[cell_y_pos + y, right_part_x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+                y_true[cell_y_pos + y, right_part_x,  POS_SCORE] = max(y_true[cell_y_pos + y, right_part_x,  POS_SCORE],  HAS_OBJECT_WEIGHT)
                 
-        if up_margin > self.intersection_threshold:
+        if up_margin >  intersection_threshold:
             for x in range(left_full_x, right_part_x): 
                 # only set the score, x y w h don't matter in the loss
-                training_data[up_part_y, cell_x_pos + x, self.POS_SCORE] = max(training_data[up_part_y, left_part_x + x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+                y_true[up_part_y, cell_x_pos + x,  POS_SCORE] = max(y_true[up_part_y, left_part_x + x,  POS_SCORE],  HAS_OBJECT_WEIGHT)
                 
-        if bottom_margin > self.intersection_threshold:
+        if bottom_margin >  intersection_threshold:
             for x in range(left_full_x, right_part_x): 
                 # only set the score, x y w h don't matter in the loss
-                training_data[bottom_part_y, cell_x_pos + x, self.POS_SCORE] = max(training_data[bottom_part_y, cell_x_pos + x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+                y_true[bottom_part_y, cell_x_pos + x,  POS_SCORE] = max(y_true[bottom_part_y, cell_x_pos + x,  POS_SCORE],  HAS_OBJECT_WEIGHT)
                 
-        if left_margin*up_margin  > self.intersection_threshold: 
-            training_data[up_part_y, left_part_x, self.POS_SCORE] = max(training_data[up_part_y, left_part_x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+        if left_margin*up_margin  >  intersection_threshold: 
+            y_true[up_part_y, left_part_x,  POS_SCORE] = max(y_true[up_part_y, left_part_x,  POS_SCORE],  HAS_OBJECT_WEIGHT)
 
-        if left_margin*bottom_margin  > self.intersection_threshold: 
-            training_data[bottom_part_y, left_part_x, self.POS_SCORE] = max(training_data[bottom_part_y, left_part_x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+        if left_margin*bottom_margin  >  intersection_threshold: 
+            y_true[bottom_part_y, left_part_x,  POS_SCORE] = max(y_true[bottom_part_y, left_part_x,  POS_SCORE],  HAS_OBJECT_WEIGHT)
 
-        if right_margin*bottom_margin  > self.intersection_threshold: 
-            training_data[bottom_part_y, right_part_x, self.POS_SCORE] = max(training_data[bottom_part_y, right_part_x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+        if right_margin*bottom_margin  >  intersection_threshold: 
+            y_true[bottom_part_y, right_part_x,  POS_SCORE] = max(y_true[bottom_part_y, right_part_x,  POS_SCORE],  HAS_OBJECT_WEIGHT)
 
-        if right_margin*up_margin  > self.intersection_threshold: 
-            training_data[up_part_y, right_part_x, self.POS_SCORE] = max(training_data[up_part_y, right_part_x, self.POS_SCORE], self.HAS_OBJECT_WEIGHT)
+        if right_margin*up_margin  >  intersection_threshold: 
+            y_true[up_part_y, right_part_x,  POS_SCORE] = max(y_true[up_part_y, right_part_x,  POS_SCORE],  HAS_OBJECT_WEIGHT)
 
-    return training_data
+    return y_true
 
 # Procedure:
-#  ground_truth_factory
+#  y_true_generator
 # Purpose:
 #  To create a generator for ground truth data corresponding to image ids
 # Parameters:
@@ -212,8 +212,8 @@ def gen_training_tensor(coco, bounding_box_count, cell_width_px, cell_height_px,
 #  cell_width_px < min(width(imgs)) - should be fairly small
 #  cell_hegiht < min(hegiht(imgs)) - should be fairly small
 # Postconditions:
-#  generator yields numpy arrays as defined gen_training_tensor
-def ground_truth_factory(
+#  generator yields numpy arrays as defined get_y_true
+def y_true_generator(
         coco,
         bounding_box_count,
         cell_width_px,
@@ -223,7 +223,7 @@ def ground_truth_factory(
         save_data=False,
         load_data=True):
     for id in image_ids:
-        yield gen_training_tensor(
+        yield get_y_true(
             coco,
             bounding_box_count,
             cell_width_px,
@@ -231,7 +231,7 @@ def ground_truth_factory(
             id)
 
 # Procedure:
-#  image_gen_factory
+#  image_generator
 # Purpose:
 #  To create a generator that yields numpy arrays corresponding to image ids
 # Parameters:
@@ -244,7 +244,7 @@ def ground_truth_factory(
 # Postconditions:
 #  All image ids exist
 #  values in output are bounded between 0 and 1
-def image_gen_factory(image_ids, buffer_size=0):
+def image_generator(image_ids, buffer_size=0):
     for id in image_ids:
         image = file_management.get_image(id)
         image = np.divide(image, 256, dtype=np.float32)
@@ -273,7 +273,7 @@ def all_imgs_numpy(num_images):
     img_ids = get_downloaded_ids()
     img_ids = list(filter(is_not_greyscale, img_ids))[:num_images]
     imgs = np.empty((len(img_ids), 640, 640, 3), np.float)
-    gen = image_gen_factory(img_ids)
+    gen = image_generator(img_ids)
     for index in range(len(img_ids)):
         imgs[index, :, :, :] = next(gen)
 
@@ -306,22 +306,49 @@ def all_ground_truth_numpy(
     img_ids = get_downloaded_ids()
     img_ids = list(filter(is_not_greyscale, img_ids))[:num_images]
     output = np.empty((len(img_ids), ceil(PADDED_SIZE/cell_height_px), ceil(PADDED_SIZE/cell_width_px), bounding_box_count * 5), np.float)
-    gen = ground_truth_factory(coco, bounding_box_count, cell_width_px, cell_height_px, img_ids)
+    gen = y_true_generator(coco, bounding_box_count, cell_width_px, cell_height_px, img_ids)
     for index in range(len(img_ids)):
         output[index, :, :, :] = next(gen)
     return output
 
-# Returns a generator of tuples: (img, training tensor)
+# Returns a generator of tuple: (img, training tensor)
 # Normalize the image matrix (set all the value in the range
 # [0, 1]) We should discus whether we want to standardize (z-score) our data or
 # not.
 # Returns a tuple of generators
-def get_training_data_generators(cell_rows, cell_columns, bounding_box_count, image_width, image_height):
-    ## Load in image data
-    img_array = file_management.get_image(img['id'])
+def training_data_generator(
+        coco,
+        num_images,
+        bounding_box_count,
+        cell_width_px,
+        cell_height_px, 
+        batch_size):
+    img_ids = get_downloaded_ids()
+    img_ids = list(filter(is_not_greyscale, img_ids))[:num_images]
+    while 1:
+        for img_id in img_ids:
+            image_batch = np.empty((batch_size,640, 640, 3), np.float) #hard code
+            y_true_batch = np.empty((batch_size,10,10,5), np.float) #hard code
+            for i in range(batch_size): 
+                image = file_management.get_image(img_id)
+                image = np.divide(image, 256, dtype=np.float32)
+                try:
+                    image = pad_image(image, PADDED_SIZE)
+                except Exception as e:
+                    print(id)
+                    raise e
+                ground_truth = get_y_true(
+                    coco,
+                    bounding_box_count,
+                    cell_width_px,
+                    cell_height_px,
+                    img_id
+                )
+                image_batch[i, :, :, :] = image
+                y_true_batch[i, :, :, :] = ground_truth
 
-    # Compress to 0 to 1
-    img_array = np.divide(img_array, 256, dtype=np.float32)
+
+            yield (image_batch, y_true_batch)
 
 def is_not_greyscale(img_id):
     img = get_image(img_id)
