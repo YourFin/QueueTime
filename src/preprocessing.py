@@ -279,8 +279,8 @@ def training_data_generator(
                     cell_height_px,
                     img_id
                 )
-                image_batch[i,...] = image
-                y_true_batch[i,...] = ground_truth
+                image_batch[i, :, :, :] = image
+                y_true_batch[i, :, :, :] = ground_truth
 
 
             yield (image_batch, y_true_batch)
