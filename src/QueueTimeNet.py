@@ -165,7 +165,7 @@ def QueueTime_loss(y_true, y_pred): # should be a BS * CELL_ROW * CELL_COL * 5 t
 	print("[INFO] ypred", y_pred)
 
 	coord = 5
-	noobj = 0.5
+	noobj = 0.3
 
 	indicator = y_true[...,0]
 	print("[INFO] indicator", indicator)
