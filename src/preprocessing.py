@@ -49,7 +49,7 @@ def get_y_true(coco, bounding_box_count, cell_width_px, cell_height_px, img_id):
     bounding_box_count = 1
 
     # These should probably get moved to the parameters
-    DEFAULT_LOCATION = 0
+    DEFAULT_VALUE = 0
     NO_OBJECT_WEIGHT = 0
     HAS_OBJECT_WEIGHT = 1
 
@@ -63,18 +63,18 @@ def get_y_true(coco, bounding_box_count, cell_width_px, cell_height_px, img_id):
 
     annotations = get_image_annotations(coco, img_id)
 
-    img = coco.loadImgs([img_id])[0]
+    # img = coco.loadImgs([img_id])[0]
 
     # cell_x_count, how many cells are on horizontal direction, cell_y_count,
     # how many cells are on vertical direction
     cell_x_count = ceil(PADDED_SIZE / cell_width_px)
     cell_y_count = ceil(PADDED_SIZE / cell_height_px)
     # 5 parameters to each bounding box: Probability, X pos, Y pos, Width, Height
-    y_true = np.full((cell_y_count, cell_x_count, bounding_box_count * 5), DEFAULT_LOCATION)
+    y_true = np.full((cell_y_count, cell_x_count, bounding_box_count * 5), DEFAULT_VALUE)
     y_true = y_true.astype('float32')
     # Set all object probabilities to NO_OBJECT_WEIGHT
-    if DEFAULT_LOCATION != NO_OBJECT_WEIGHT:
-        y_true[..., ..., 4: :5] = NO_OBJECT_WEIGHT
+    if DEFAULT_VALUE != NO_OBJECT_WEIGHT:
+        y_true[..., ..., POS_OBJ_SCORE: :5] = NO_OBJECT_WEIGHT
 
     for annotation in annotations:
         # Calculate the cell that the annotation should match
