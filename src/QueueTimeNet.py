@@ -164,7 +164,7 @@ def QueueTime_loss(y_true, y_pred): # should be a BS * CELL_ROW * CELL_COL * 5 t
 	print("[INFO] ytrue", y_true)
 	print("[INFO] ypred", y_pred)
 
-	coord = 100
+	coord = 10
 	noobj = 0.1
 
 	indicator = y_true[...,0]
@@ -210,12 +210,12 @@ def QueueTime_loss(y_true, y_pred): # should be a BS * CELL_ROW * CELL_COL * 5 t
 	union_areas = pred_areas + true_areas - intersect_areas
 	iou_scores  = tf.truediv(intersect_areas, union_areas + 1e-10)
 	
-	true_box_conf = iou_scores * y_true[..., 0]
-	print("[INFO] true_box_conf ? 10 10", true_box_conf) #expect ?*10*10 here
+	# true_box_conf = iou_scores * y_true[..., 0]
+	# print("[INFO] true_box_conf ? 10 10", true_box_conf) #expect ?*10*10 here
 	
 
-	pr_loss_pos = indicator * K.square(true_box_conf - y_pred[...,0])
-	pr_loss_neg = noobj*(1-indicator) * K.square(true_box_conf - y_pred[...,0])
+	pr_loss_pos = indicator * K.square(iou_scores * (y_true[..., 0] - y_pred[...,0]))
+	pr_loss_neg = noobj*(1-indicator) * K.square(iou_scores * (true_box_conf - y_pred[...,0]))
 	print("[INFO] pr_loss_neg ? 10 10", pr_loss_neg) #expect ?*10*10 here
 
 	# m = K.int_shape(y_true)

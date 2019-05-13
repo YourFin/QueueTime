@@ -3,7 +3,7 @@
 
 # DATA_SIZE = 500 #out of 64115
 # EPOCHS = 20
-INIT_LR = 1e-2   #learning_rate
+INIT_LR = 1e-4   #learning_rate
 BS = 16
 IMAGE_DIMS = (640, 640, 3)
 CELL_ROW = 10
@@ -110,7 +110,7 @@ if __name__ == '__main__':
     print("[INFO] compiling model...")
     model = build(width=IMAGE_DIMS[1], height=IMAGE_DIMS[0],
                   depth=IMAGE_DIMS[2], classes=NUM_CLASSES)
-    opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
+    opt = Adam(lr=INIT_LR, decay= 0) #INIT_LR / EPOCHS)
     model.compile(loss=QueueTime_loss, optimizer=opt, metrics=["accuracy"]) # not sure about the metrics, decided later
 
     # train the network
