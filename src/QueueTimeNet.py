@@ -204,11 +204,11 @@ def QueueTime_loss(y_true, y_pred): # should be a BS * CELL_ROW * CELL_COL * 5 t
 	intersect_wh    = K.maximum(intersect_maxes - intersect_mins, 0.)
 	intersect_areas = intersect_wh[..., 0] * intersect_wh[..., 1]
 	print("[INFO] intersect_areas ? 10 10", intersect_areas)
-	true_areas = true_box_wh[..., 0] * true_box_wh[..., 1]
-	pred_areas = pred_box_wh[..., 0] * pred_box_wh[..., 1]
+	true_areas = true_box_wh[..., 0] * true_box_wh[..., 1] #may equal to 0
+	pred_areas = pred_box_wh[..., 0] * pred_box_wh[..., 1] #may equal to 0
 
 	union_areas = pred_areas + true_areas - intersect_areas
-	iou_scores  = tf.truediv(intersect_areas, union_areas)
+	iou_scores  = tf.truediv(intersect_areas, union_areas + 1e-10)
 	
 	true_box_conf = iou_scores * y_true[..., 0]
 	print("[INFO] true_box_conf ? 10 10", true_box_conf) #expect ?*10*10 here
@@ -223,9 +223,9 @@ def QueueTime_loss(y_true, y_pred): # should be a BS * CELL_ROW * CELL_COL * 5 t
 
 
 	loss = (xy_loss+wh_loss+pr_loss_neg+pr_loss_pos)/16.0 #hard code BS now
-	fake_loss = pr_loss_neg
+	# fake_loss = pr_loss_neg
 
-	real_loss = K.sum(K.sum(K.sum(fake_loss,0), 0), 0, True)
+	real_loss = K.sum(K.sum(K.sum(loss,0), 0), 0, True)
 	print("[INFO] real_loss", real_loss)
 	return real_loss
 	
