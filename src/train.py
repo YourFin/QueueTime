@@ -118,7 +118,7 @@ if __name__ == '__main__':
     H = model.fit_generator(
         training_data_generator(coco, 0, args["image_count"], 1, CELL_WIDTH, CELL_HEIGHT, BS),
         # aug.flow(trainX, trainY, batch_size=BS),
-        validation_data=training_data_generator(coco, 2*args["image_count"], args["image_count"] // 20,args["image_count"] // (20 * BS) 1, CELL_WIDTH, CELL_HEIGHT, BS),
+        validation_data=training_data_generator(coco, 2*args["image_count"], args["image_count"] // 20,args["image_count"] // (20 * BS), 1, CELL_WIDTH, CELL_HEIGHT, BS),
         steps_per_epoch=args["image_count"] // BS,
         epochs=args["epoch"], verbose=1)
 
