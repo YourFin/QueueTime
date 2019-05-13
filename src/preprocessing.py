@@ -253,6 +253,7 @@ def all_ground_truth_numpy(
 # Returns a tuple of generators
 def training_data_generator(
         coco,
+        start_index,
         num_images,
         bounding_box_count,
         cell_width_px,
