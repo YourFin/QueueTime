@@ -45,8 +45,7 @@ def evaluate_video(video_path):
     frame_annotations = []
 
     frame_num = -1
-    # TODO: remove frame number cap
-    while vidstream.isOpened() and frame_num < 10:
+    while vidstream.isOpened():
         frame_num += 1
 
         success, frame = vidstream.read()
@@ -58,23 +57,20 @@ def evaluate_video(video_path):
         frame = frame[:,:,::-1]
 
         # Run through the model, grabbing the only frame
-        result = model.detect([frame], verbose=0)
+        result = model.detect([frame], verbose=0)[0]
 
         this_frame_annotations = []
         for index, class_id in enumerate(result['class_ids']):
-            if class_id is PERSON_CATEGORY_ID:
-                this_frame_annotations.append(
-                    {'bbox': result['rois'][index],
-                     'score': result['scores'][index],
+            if class_id == PERSON_CATEGORY_ID:
+                ann = {'bbox': result['rois'][index].tolist(),
+                     'score': float(result['scores'][index]),
                      'index': index
-                    })
+                    }
+                this_frame_annotations.append(ann)
 
         frame_annotations.append(this_frame_annotations)
-        print(frame_num)
 
     return frame_annotations
-
-
 
 
 if __name__ == '__main__':
@@ -89,4 +85,5 @@ if __name__ == '__main__':
     assert_model_downloaded()
     frame_annotations = evaluate_video(str(arguments["video_path"]))
 
-    print(frame_annotations)
+    with open(str(arguments["output"]), 'w') as filepointer:
+        json.dump(frame_annotations, filepointer)
