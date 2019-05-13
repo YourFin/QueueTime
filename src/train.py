@@ -3,7 +3,7 @@
 
 # DATA_SIZE = 500 #out of 64115
 # EPOCHS = 20
-INIT_LR = 5e-4   #learning_rate
+INIT_LR = 1e-3   #learning_rate
 BS = 16
 IMAGE_DIMS = (640, 640, 3)
 CELL_ROW = 10
@@ -53,12 +53,14 @@ if __name__ == '__main__':
     ap.add_argument("-i", "--image_count", type=int, default=800)
     ap.add_argument("-e", "--epoch", type=int, default=10)
     ap.add_argument("-b", "--batch_size", type=int, default=16)
+    ap.add_argument("-l", "--learning_rate", type=float, default=0.001)
     ap.add_argument("-p", "--plot", type=str, default="plot.png",
                     help="path to output accuracy/loss plot")
     args = vars(ap.parse_args())
 
     EPOCHS = args["epoch"]
     BS = args["batch_size"]
+    INIT_LR = args["learning_rate"]
 
     # initialize the number of epochs to train for, initial learning rate,
     # batch size, and image dimensions
