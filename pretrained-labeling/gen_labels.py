@@ -42,6 +42,8 @@ def evaluate_video(video_path):
     model = MaskRCNN(mode='inference', model_dir=MODEL_DIR, config=MaskRCNNConfig())
     model.load_weights(COCO_MODEL_PATH, by_name=True)
 
+    frame_annotations = []
+
     frame_num = -1
     # TODO: remove frame number cap
     while vidstream.isOpened() and frame_num < 10:
@@ -58,7 +60,22 @@ def evaluate_video(video_path):
         # Run through the model, grabbing the only frame
         result = model.detect([frame], verbose=0)
 
-        print(result)
+        this_frame_annotations = []
+        for index, class_id in enumerate(result['class_ids']):
+            if class_id is PERSON_CATEGORY_ID:
+                this_frame_annotations.append(
+                    {'bbox': result['rois'][index],
+                     'score': result['scores'][index],
+                     'index': index
+                    })
+
+        frame_annotations.append(this_frame_annotations)
+        print(frame_num)
+
+    return frame_annotations
+
+
+
 
 if __name__ == '__main__':
     import argparse
@@ -70,4 +87,6 @@ if __name__ == '__main__':
     arguments = vars(ap.parse_args())
 
     assert_model_downloaded()
-    evaluate_video(str(arguments["video_path"]))
+    frame_annotations = evaluate_video(str(arguments["video_path"]))
+
+    print(frame_annotations)
