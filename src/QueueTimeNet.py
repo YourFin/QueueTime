@@ -174,35 +174,36 @@ def QueueTime_loss(y_true, y_pred): # should be a BS * CELL_ROW * CELL_COL * 5 t
 	y_loss = K.square(y_true[...,2] - y_pred[...,2])
 	# print("[INFO] y loss", y_loss.eval())
 	xy_loss = coord * indicator * (y_loss+x_loss)
-	# print("[INFO] xy_loss", xy_loss.eval())
+	print("[INFO] xy_loss ? 10 10 [[[1]]]", xy_loss)
 
 
 	w_loss = K.square(K.sqrt(y_true[...,3]) - K.sqrt(y_pred[...,3]))
 	h_loss = K.square(K.sqrt(y_true[...,4]) - K.sqrt(y_pred[...,4]))
 	wh_loss = coord * indicator*(w_loss+h_loss)
 
-    ### adjust x and y      
+       
 	pred_box_xy = y_pred[..., 1:3]
-	print("[INFO] pred_box_xy", pred_box_xy)
+	print("[INFO] pred_box_xy ?, 10, 10, 2", pred_box_xy)
 	pred_box_wh = y_pred[..., 3:5]
 	true_box_xy = y_true[..., 1:3] # relative position to the containing cell
 	true_box_wh = y_true[..., 3:5] # number of cells accross, horizontally and vertically
-	print("[INFO] pred_box_wh", pred_box_wh)
+	print("[INFO] pred_box_wh ? 10 10 2", pred_box_wh)
 	
 	### adjust confidence
 	true_wh_half = true_box_wh / 2.
 	true_mins    = true_box_xy - true_wh_half
 	true_maxes   = true_box_xy + true_wh_half
+	print("[INFO] true_maxes ? 10 10 2", true_maxes)
 
 	pred_wh_half = pred_box_wh / 2.
 	pred_mins    = pred_box_xy - pred_wh_half
 	pred_maxes   = pred_box_xy + pred_wh_half       
 
-	intersect_mins  = tf.maximum(pred_mins,  true_mins)
-	intersect_maxes = tf.minimum(pred_maxes, true_maxes)
-	intersect_wh    = tf.maximum(intersect_maxes - intersect_mins, 0.)
+	intersect_mins  = K.maximum(pred_mins,  true_mins)
+	intersect_maxes = K.minimum(pred_maxes, true_maxes)
+	intersect_wh    = K.maximum(intersect_maxes - intersect_mins, 0.)
 	intersect_areas = intersect_wh[..., 0] * intersect_wh[..., 1]
-	print("[INFO] intersect_areas", intersect_areas)
+	print("[INFO] intersect_areas ? 10 10", intersect_areas)
 	true_areas = true_box_wh[..., 0] * true_box_wh[..., 1]
 	pred_areas = pred_box_wh[..., 0] * pred_box_wh[..., 1]
 
@@ -210,17 +211,18 @@ def QueueTime_loss(y_true, y_pred): # should be a BS * CELL_ROW * CELL_COL * 5 t
 	iou_scores  = tf.truediv(intersect_areas, union_areas)
 	
 	true_box_conf = iou_scores * y_true[..., 0]
-	print("[INFO] true_box_conf", true_box_conf) #expect ?*10*10 here
+	print("[INFO] true_box_conf ? 10 10", true_box_conf) #expect ?*10*10 here
 	
 
 	pr_loss_pos = indicator * K.square(true_box_conf - y_pred[...,0])
 	pr_loss_neg = noobj*(1-indicator) * K.square(true_box_conf - y_pred[...,0])
+	print("[INFO] pr_loss_neg ? 10 10", pr_loss_neg) #expect ?*10*10 here
 
 	# m = K.int_shape(y_true)
 	# print("[INFO] y_true is ", y_true, ",m is ", m, "xy_loss is", xy_loss[0])
 
 
-	loss = (xy_loss+wh_loss+pr_loss_neg+pr_loss_pos)/16 #hard code BS now
+	loss = (xy_loss+wh_loss+pr_loss_neg+pr_loss_pos)/16.0 #hard code BS now
 
 	real_loss = K.sum(K.sum(K.sum(loss,0), 0), 0, True)
 	print("[INFO] real_loss", real_loss)
