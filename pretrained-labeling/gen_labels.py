@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import json
 import numpy as np
 import cv2
@@ -9,8 +10,6 @@ from os.path import dirname
 import os
 
 QUEUETIME_DIR = dirname(dirname(os.path.abspath(__file__)))
-DATASET_DIR = '%s/data/coco' % QUEUETIME_DIR
-ANNOTATION_FILE = '%s/annotations/instances_train2017.json' % DATASET_DIR
 
 ROOT_DIR = dirname(os.path.abspath(__file__))
 MODEL_DIR = ROOT_DIR + '/model_data'
@@ -65,17 +64,19 @@ def evaluate_video(video_path):
                 # Convert bounding box into [x, y, width, height]
                 # from [x1, y1, x2, y2]
                 box = result['rois'][index].tolist()
-                assert box[0] <= box[2], "x2 < x1 on index %d in frame %d" % (frame_num, index)
-                assert box[1] <= box[3], "y2 < y1 on index %d in frame %d" % (frame_num, index)
-                wh_box = [box[0], box[1], box[2] - box[0], box[3] - box[1]]
-                ann = {'bbox': wh_box,
-                     'score': float(result['scores'][index]),
-                     'index': index
-                    }
+                assert box[0] <= box[2], "y2 < y1 on index %d in frame %d" % (frame_num, index)
+                assert box[1] <= box[3], "x2 < x1 on index %d in frame %d" % (frame_num, index)
+                wh_box = [box[1], box[0], box[3] - box[1], box[2] - box[0]]
+                ann = {
+                    'bbox': wh_box,
+                    'score': float(result['scores'][index]),
+                    'index': index
+                }
                 this_frame_annotations.append(ann)
 
         frame_annotations.append(this_frame_annotations)
 
+    vidstream.release()
     return frame_annotations
 
 
