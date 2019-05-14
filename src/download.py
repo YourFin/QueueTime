@@ -1,7 +1,7 @@
 from file_management import ANNOTATION_FILE, IMAGES_DIR
 
 # Hardcoded parameters
-CATEGORY_NAMES = ['person']
+CATEGORY_NAMES = ['person']  # person category should be 1
 SUPERCATEGORY_NAMES = []
 
 # Procedure:
