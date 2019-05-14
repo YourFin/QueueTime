@@ -62,7 +62,13 @@ def evaluate_video(video_path):
         this_frame_annotations = []
         for index, class_id in enumerate(result['class_ids']):
             if class_id == PERSON_CATEGORY_ID:
-                ann = {'bbox': result['rois'][index].tolist(),
+                # Convert bounding box into [x, y, width, height]
+                # from [x1, y1, x2, y2]
+                box = result['rois'][index].tolist()
+                assert box[0] <= box[2], "x2 < x1 on index %d in frame %d" % (frame_num, index)
+                assert box[1] <= box[3], "y2 < y1 on index %d in frame %d" % (frame_num, index)
+                wh_box = [box[0], box[1], box[2] - box[0], box[3] - box[1]]
+                ann = {'bbox': wh_box,
                      'score': float(result['scores'][index]),
                      'index': index
                     }
