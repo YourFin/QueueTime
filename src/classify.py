@@ -51,8 +51,10 @@ anns = cnn_y_to_absolute(CELL_WIDTH, CELL_HEIGHT, proba)
 anns = list(filter(lambda ann: ann['score'] > 0.001, anns))
 
 # Add color key:
+scores = [ann['score'] for ann in anns]
+normalize_color = lambda score: (score - min(scores)) / max(scores)
 for ann in anns:
-    ann['color'] = plt.cm.jet(ann['score'])
+    ann['color'] = plt.cm.jet(normalize_color(ann['score']))
 
 plot_annotations(img_id, anns)
 
