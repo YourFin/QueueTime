@@ -41,6 +41,7 @@ def plot_annotations(img_id, annotations, color='r'):
             edgecolor=ann.get('color', color),
             facecolor='none'
         )
+        ax.add_patch(rect_patch)
     plt.show()
 
 # Procedure:
