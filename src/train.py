@@ -20,7 +20,7 @@ if __name__ == '__main__':
     # # set the matplotlib backend so figures can be saved in the background
 
     # import the necessary packages
-    import matplotlib
+    # import matplotlib
     from keras.models import load_model
     from keras.preprocessing.image import ImageDataGenerator
     from keras.optimizers import Adam
@@ -51,8 +51,8 @@ if __name__ == '__main__':
     # 	help="path to output label binarizer")
     ap.add_argument("-o", "--image_offset", type=int, default=3000)
     ap.add_argument("-i", "--image_count", type=int, default=1000)
-    ap.add_argument("-e", "--epoch", type=int, default=10)
-    ap.add_argument("-b", "--batch_size", type=int, default=16)
+    ap.add_argument("-e", "--epoch", type=int, default=40)
+    ap.add_argument("-b", "--batch_size", type=int, default=10)
     ap.add_argument("-l", "--learning_rate", type=float, default=0.001)
     ap.add_argument("-r", "--reload", type=bool, default=False)
     # ap.add_argument("-p", "--plot", type=str, default="plot.png",
