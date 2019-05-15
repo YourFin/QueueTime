@@ -31,7 +31,7 @@ args = vars(ap.parse_args())
 img_id = args["image"]
 
 image = pad_image(get_image(img_id), PADDED_SIZE)
-image = np.expand_dims(image, axis=0) 
+image = np.expand_dims(image, axis=0)
 
 # load the trained convolutional neural network and the label
 # binarizer
@@ -51,8 +51,12 @@ anns = cnn_y_to_absolute(CELL_WIDTH, CELL_HEIGHT, proba)
 anns = list(filter(lambda ann: ann['score'] > 0.001, anns))
 
 # Add color key:
+scores = [ann['score'] for ann in anns]
+normalize_score = lambda score: (score - min(scores)) / (max(scores) - min(scores))
 for ann in anns:
-    ann['color'] = plt.cm.jet(ann['score'])
+    ann['color'] = plt.cm.jet(normalize_score(ann['score']))
+print('Max score (dark red): ' + str(max(scores)))
+print('Min score (dark blue): ' + str(min(scores)))
 
 plot_annotations(img_id, anns)
 
