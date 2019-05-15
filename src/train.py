@@ -77,7 +77,7 @@ if __name__ == '__main__':
     print("[INFO] loading images...")
 
     coco = COCO(ANNOTATION_FILE)
-    opt = Adam(lr=INIT_LR, decay= 0) #INIT_LR / EPOCHS)
+    opt = Adam(lr=INIT_LR, decay= INIT_LR / EPOCHS)
 
     if (reload_bool == False): 
         # print("[INFO] the true size", trainX.shape)
