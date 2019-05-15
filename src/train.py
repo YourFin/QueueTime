@@ -94,7 +94,7 @@ if __name__ == '__main__':
         model.compile(loss=QueueTime_loss, optimizer=opt, metrics=["accuracy"]) # not sure about the metrics, decided later
     else: 
         #Load partly trained model
-        model = load_model(args["model"], custom_objects={ 'loss': QueueTime_loss })
+        model = load_model(args["model"], custom_objects={ 'QueueTime_loss': QueueTime_loss })
 
     # train the network
     print("[INFO] training network...")
