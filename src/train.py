@@ -97,7 +97,7 @@ if __name__ == '__main__':
     # train the network
     print("[INFO] training network...")
     H = model.fit_generator(
-        training_data_generator(coco, 0, args["image_count"] + args["image_offset"], 1, CELL_WIDTH, CELL_HEIGHT, BS),
+        training_data_generator(coco, args["image_offset"], args["image_count"], 1, CELL_WIDTH, CELL_HEIGHT, BS),
         # aug.flow(trainX, trainY, batch_size=BS),
         validation_data=training_data_generator(coco, args["image_offset"], args["image_count"] // 20, 1, CELL_WIDTH, CELL_HEIGHT, BS),
         validation_steps = args["image_count"] // (20 * BS), 
