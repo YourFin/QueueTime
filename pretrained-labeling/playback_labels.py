@@ -8,8 +8,18 @@ import os
 
 QUEUETIME_DIR = dirname(dirname(os.path.abspath(__file__)))
 
-def playback_with_labels(video_path, annotations):
-    "Play back the video at $video_path with $annotations rectangles on top"
+def playback_with_labels(video_path, annotations,
+                         annotation_filter=lambda frame_num, annotation: True):
+    """
+    Play back the video at $video_path with $annotations rectangles on top
+
+    $annotation_filter is a function that is used to determine whether or not a
+     bounding rectangle is drawn over the video
+     it is passed the index of the frame in the video, along with the
+     annotation that is being drawn
+     $annotation_filter defaults to a constant True function, i.e. all
+      annotations shown
+    """
 
     # Thickness of rectangles in pixels
     RECT_THICKNESS = 2
@@ -31,11 +41,8 @@ def playback_with_labels(video_path, annotations):
             cv2.rectangle(frame, upper_left, bottom_right, (0, 255, 0), RECT_THICKNESS)
 
         cv2.imshow('Video', frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if cv2.waitKey(10) & 0xFF == ord('q'):
             break
-        #plt.imshow(frame)
-        #plt.show()
-        #input("Press Enter to go to next frame...")
 
     vidstream.release()
 
