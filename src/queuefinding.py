@@ -25,7 +25,7 @@ def single_abs_ann_to_rect_mask(mask_width, mask_height, bbox):
     mask[bbox[1]:bbox[1]+bbox[3], bbox[0]:bbox[0]+bbox[2]] = 1
     return mask
 
-def abs_anns_to_heatmap(mask_width, mask_height, anns):
+def abs_anns_to_heatmap(mask_width, mask_height, anns, std_deviation=1, kernel_size=5):
     """
     Converts a coco style list of annotations into a location heatmap,
     of size $mask_width by $mask_height.
@@ -50,7 +50,21 @@ def abs_anns_to_heatmap(mask_width, mask_height, anns):
         mask += single_abs_ann_to_rect_mask(mask_width, mask_height, ann['bbox'])
 
     mask = mask / mask.max()
-    return mask
+    blur = cv2.GaussianBlur(mask, kernel_size, std_deviation)
+    return blur
+
+def heatmap_bounding_box_sum(heatmap, bbox):
+    "Gives the sum of all values in a heatmap under a given bounding box"
+    (rows, columns) = heatmap.shape
+    for item in bbox:
+        assert item >= 0
+
+    assert bbox[0] + bbox[2] < columns
+    assert bbox[1] + bbox[3] < rows
+
+    sub_hm = heatmap[bbox[1]:bbox[1] + bbox[3], bbox[0]:bbox[0] + bbox[2]]
+    return np.sum(sub_hm)
+
 
 def test_abs_anns_to_heatmap():
     import matplotlib.pyplot as plt
