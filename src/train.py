@@ -49,7 +49,8 @@ if __name__ == '__main__':
                     help="path to output model")
     # ap.add_argument("-l", "--labelbin", required=True,
     # 	help="path to output label binarizer")
-    ap.add_argument("-i", "--image_count", type=int, default=800)
+    ap.add_argument("-o", "--image_offset", type=int, default=3000)
+    ap.add_argument("-i", "--image_count", type=int, default=1000)
     ap.add_argument("-e", "--epoch", type=int, default=10)
     ap.add_argument("-b", "--batch_size", type=int, default=16)
     ap.add_argument("-l", "--learning_rate", type=float, default=0.001)
@@ -96,9 +97,9 @@ if __name__ == '__main__':
     # train the network
     print("[INFO] training network...")
     H = model.fit_generator(
-        training_data_generator(coco, 0, args["image_count"], 1, CELL_WIDTH, CELL_HEIGHT, BS),
+        training_data_generator(coco, 0, args["image_count"] + args["image_offset"], 1, CELL_WIDTH, CELL_HEIGHT, BS),
         # aug.flow(trainX, trainY, batch_size=BS),
-        validation_data=training_data_generator(coco, args["image_count"], args["image_count"] // 20, 1, CELL_WIDTH, CELL_HEIGHT, BS),
+        validation_data=training_data_generator(coco, args["image_offset"], args["image_count"] // 20, 1, CELL_WIDTH, CELL_HEIGHT, BS),
         validation_steps = args["image_count"] // (20 * BS), 
         steps_per_epoch=args["image_count"] // BS,
         epochs=args["epoch"], verbose=1)
