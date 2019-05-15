@@ -44,7 +44,7 @@ if __name__ == '__main__':
     from QueueTimeNet import build, QueueTime_loss
 
     # use custom loss
-    get_custom_objects.update({"QueueTime_loss": QueueTime_loss})
+    # get_custom_objects.update({"QueueTime_loss": QueueTime_loss})
     # construct the argument parse and parse the arguments
     ap = argparse.ArgumentParser()
     ap.add_argument("-m", "--model", required=True,
@@ -94,7 +94,7 @@ if __name__ == '__main__':
         model.compile(loss=QueueTime_loss, optimizer=opt, metrics=["accuracy"]) # not sure about the metrics, decided later
     else: 
         #Load partly trained model
-        model = load_model(args["model"])
+        model = load_model(args["model"], , custom_objects={ 'loss': QueueTime_loss })
 
     # train the network
     print("[INFO] training network...")
