@@ -69,7 +69,7 @@ if __name__ == '__main__':
     model_name_for_save = model_name
     if (reload_bool == True):
         print("[INFO] reloading model")
-        model_name_for_save = "new_trained" + model_name_for_save
+        model_name_for_save =  model_name_for_save + "new"
     else:
         print("[INFO] training a new model")
 
