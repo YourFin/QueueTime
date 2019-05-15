@@ -21,6 +21,7 @@ if __name__ == '__main__':
 
     # import the necessary packages
     import matplotlib
+    from keras.models import load_model
     from keras.preprocessing.image import ImageDataGenerator
     from keras.optimizers import Adam
     from keras.preprocessing.image import img_to_array
@@ -44,8 +45,6 @@ if __name__ == '__main__':
 
     # construct the argument parse and parse the arguments
     ap = argparse.ArgumentParser()
-    # ap.add_argument("-d", "--dataset", required=True,
-    # 	help="path to input dataset (i.e., directory of images)")
     ap.add_argument("-m", "--model", required=True,
                     help="path to output model")
     # ap.add_argument("-l", "--labelbin", required=True,
@@ -54,80 +53,59 @@ if __name__ == '__main__':
     ap.add_argument("-e", "--epoch", type=int, default=10)
     ap.add_argument("-b", "--batch_size", type=int, default=16)
     ap.add_argument("-l", "--learning_rate", type=float, default=0.001)
-    ap.add_argument("-p", "--plot", type=str, default="plot.png",
-                    help="path to output accuracy/loss plot")
+    ap.add_argument("-r", "--reload", type=bool, default=False)
+    # ap.add_argument("-p", "--plot", type=str, default="plot.png",
+    #                 help="path to output accuracy/loss plot")
     args = vars(ap.parse_args())
 
     EPOCHS = args["epoch"]
     BS = args["batch_size"]
     INIT_LR = args["learning_rate"]
+    reload_bool = args["reload"]
+    model_name = args["model"]
+    model_name_for_save = model_name
+    if (reload_bool == True):
+        print("[INFO] reloading model")
+        model_name_for_save = "new_trained" + model_name_for_save
+    else:
+        print("[INFO] training a new model")
 
-    # initialize the number of epochs to train for, initial learning rate,
-    # batch size, and image dimensions
 
-    # initialize the data and labels
-    # data = []
-    # labels = []
-
-    # grab the image paths and randomly shuffle them
     print("[INFO] loading images...")
-    # imagePaths = sorted(list(paths.list_images(args["dataset"])))
-    # random.seed(42)
-    # random.shuffle(imagePaths)
-
-    # loop over the input images
-    # for imagePath in imagePaths:
-    # 	# load the image, pre-process it, and store it in the data list
-    # 	image = cv2.imread(imagePath)
-    # 	image = cv2.resize(image, (IMAGE_DIMS[1], IMAGE_DIMS[0]))
-    # 	image = img_to_array(image)
-    # 	data.append(image)
-
-    # 	# extract the class label from the image path and update the
-    # 	# labels list
-    # 	label = imagePath.split(os.path.sep)[-2]
-    # 	labels.append(label)
 
     coco = COCO(ANNOTATION_FILE)
-
-    # labels = all_ground_truth_numpy(coco, args["image_count"], 1, CELL_WIDTH, CELL_HEIGHT)
-    # data = all_imgs_numpy(args["image_count"])
-
-    # print("[INFO] data matrix: {:.2f}MB".format(
-    #     data.nbytes / (1024 * 1000.0)))
-
-    # partition the data into training and testing splits using 80% of
-    # the data for training and the remaining 20% for testing
-    # (trainX, testX, trainY, testY) = train_test_split(data,
-    #                                                   labels, test_size=0.2, random_state=42)
-
-    # print("[INFO] the true size", trainX.shape)
-
-    # construct the image generator for data augmentation
-    # aug = ImageDataGenerator(rotation_range=25, width_shift_range=0.1,
-    #                          height_shift_range=0.1, shear_range=0.2, zoom_range=0.2,
-    #                          horizontal_flip=True, fill_mode="nearest")
-
-    # initialize the model
-    print("[INFO] compiling model...")
-    model = build(width=IMAGE_DIMS[1], height=IMAGE_DIMS[0],
-                  depth=IMAGE_DIMS[2], classes=NUM_CLASSES)
     opt = Adam(lr=INIT_LR, decay= 0) #INIT_LR / EPOCHS)
-    model.compile(loss=QueueTime_loss, optimizer=opt, metrics=["accuracy"]) # not sure about the metrics, decided later
+
+    if (reload_bool == False): 
+        # print("[INFO] the true size", trainX.shape)
+
+        # construct the image generator for data augmentation
+        # aug = ImageDataGenerator(rotation_range=25, width_shift_range=0.1,
+        #                          height_shift_range=0.1, shear_range=0.2, zoom_range=0.2,
+        #                          horizontal_flip=True, fill_mode="nearest")
+
+        # initialize the model
+        print("[INFO] compiling model...")
+        model = build(width=IMAGE_DIMS[1], height=IMAGE_DIMS[0],
+                    depth=IMAGE_DIMS[2], classes=NUM_CLASSES)
+        model.compile(loss=QueueTime_loss, optimizer=opt, metrics=["accuracy"]) # not sure about the metrics, decided later
+    else: 
+        #Load partly trained model
+        model = load_model(args["model"])
 
     # train the network
     print("[INFO] training network...")
     H = model.fit_generator(
         training_data_generator(coco, 0, args["image_count"], 1, CELL_WIDTH, CELL_HEIGHT, BS),
         # aug.flow(trainX, trainY, batch_size=BS),
-        validation_data=training_data_generator(coco, 2*args["image_count"], args["image_count"] // 20, 1, CELL_WIDTH, CELL_HEIGHT, BS),
+        validation_data=training_data_generator(coco, args["image_count"], args["image_count"] // 20, 1, CELL_WIDTH, CELL_HEIGHT, BS),
         validation_steps = args["image_count"] // (20 * BS), 
         steps_per_epoch=args["image_count"] // BS,
         epochs=args["epoch"], verbose=1)
 
     # save the model to disk
     print("[INFO] serializing network...")
-    model.save(args["model"])
+    model.save(model_name_for_save)
 
     # save the label binarizer to disk
     # print("[INFO] serializing label binarizer...")
