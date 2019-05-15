@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
     # # set the matplotlib backend so figures can be saved in the background
     # import the necessary packages
-    import matplotlib]
+    # import matplotlib
     from keras.utils.generic_utils import get_custom_objects
     from keras.models import load_model
     from keras.preprocessing.image import ImageDataGenerator
