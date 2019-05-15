@@ -16,9 +16,9 @@ def single_abs_ann_to_rect_mask(mask_width, mask_height, bbox):
     # Force cast to ints as these sometimes get loaded in as floats
     bbox = [int(item) for item in bbox]
 
-    assert bbox[0] + bbox[2] < mask_width, 'bounding box not in the image'
+    assert bbox[0] + bbox[2] <= mask_width, 'bounding box not in the image'
     assert bbox[0] >= 0, 'bounding box not in the image'
-    assert bbox[1] + bbox[3] < mask_width, 'bounding box not in the image'
+    assert bbox[1] + bbox[3] <= mask_height, 'bounding box not in the image'
     assert bbox[1] >= 0, 'bounding box not in the image'
 
     mask = np.zeros((mask_height, mask_width), np.float)
@@ -50,20 +50,25 @@ def abs_anns_to_heatmap(mask_width, mask_height, anns, std_deviation=1, kernel_s
         mask += single_abs_ann_to_rect_mask(mask_width, mask_height, ann['bbox'])
 
     mask = mask / mask.max()
-    blur = cv2.GaussianBlur(mask, kernel_size, std_deviation)
+    blur = cv2.GaussianBlur(mask, (kernel_size, kernel_size), std_deviation)
     return blur
 
+
 def heatmap_bounding_box_sum(heatmap, bbox):
-    "Gives the sum of all values in a heatmap under a given bounding box"
+    """
+    Gives the sum of all values in a heatmap under a given bounding
+    box, divided by the size of the bounding box
+    """
     (rows, columns) = heatmap.shape
     for item in bbox:
         assert item >= 0
 
-    assert bbox[0] + bbox[2] < columns
-    assert bbox[1] + bbox[3] < rows
+    assert bbox[0] + bbox[2] <= columns
+    assert bbox[1] + bbox[3] <= rows
 
     sub_hm = heatmap[bbox[1]:bbox[1] + bbox[3], bbox[0]:bbox[0] + bbox[2]]
-    return np.sum(sub_hm)
+    normalized_sum = np.mean(sub_hm)
+    return normalized_sum
 
 
 def test_abs_anns_to_heatmap():
