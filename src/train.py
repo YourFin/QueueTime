@@ -18,9 +18,9 @@ if __name__ == '__main__':
     # python train.py --dataset dataset --model pokedex.model --labelbin lb.pickle
 
     # # set the matplotlib backend so figures can be saved in the background
-
     # import the necessary packages
-    # import matplotlib
+    import matplotlib]
+    from keras.utils.generic_utils import get_custom_objects
     from keras.models import load_model
     from keras.preprocessing.image import ImageDataGenerator
     from keras.optimizers import Adam
@@ -43,6 +43,8 @@ if __name__ == '__main__':
     from preprocessing import all_imgs_numpy, all_ground_truth_numpy, training_data_generator
     from QueueTimeNet import build, QueueTime_loss
 
+    # use custom loss
+    get_custom_objects.update({"QueueTime_loss": QueueTime_loss})
     # construct the argument parse and parse the arguments
     ap = argparse.ArgumentParser()
     ap.add_argument("-m", "--model", required=True,
