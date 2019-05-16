@@ -113,13 +113,13 @@ def cnn_y_to_absolute(cell_width, cell_height, output_data):
                 cell_box_ul_x = cell_box_center_x - absolute_width / 2
                 cell_box_ul_y = cell_box_center_y - absolute_height / 2
 
-                box_ul_x = cell_box_ul_x + (x_cell * cell_width)
-                box_ul_y = cell_box_ul_y + (y_cell * cell_height)
+                abs_box_ul_x = cell_box_ul_x + (x_cell * cell_width)
+                abs_box_ul_y = cell_box_ul_y + (y_cell * cell_height)
 
                 score = output_data[y_cell, x_cell, box_num * 5 + POS_OBJ_SCORE]
 
                 bounding_box = {
-                    'bbox': [box_ul_x, box_ul_y, absolute_width, absolute_height],
+                    'bbox': [abs_box_ul_x, abs_box_ul_y, absolute_width, absolute_height],
                     'score': score
                 }
                 bounding_boxes.append(bounding_box)
