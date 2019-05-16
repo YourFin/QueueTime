@@ -29,7 +29,7 @@ ap.add_argument('image_ids', metavar='IMAGE_ID', type=int, nargs='+',
                 help='All of the image ids to process')
 ap.add_argument("-f", "--ap-file", action='store_true',
                 help='Write out classification to corresponding mAP file')
-ap.add_argument("-p", "--no-plot", action='store_false',
+ap.add_argument("-p", "--no-plot", action='store_true',
                 help='If this flag is passed, do not display the plots')
 args = vars(ap.parse_args())
 
