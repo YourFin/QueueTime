@@ -62,8 +62,6 @@ if __name__ == '__main__':
         #print(score)
         return score > arguments['threshold']
 
-
-
     # Copy pasted from playback_labels.py due to time constaints
     video_path = str(arguments['video'])
     start_frame = arguments['start_frame']

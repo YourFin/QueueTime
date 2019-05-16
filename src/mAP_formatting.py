@@ -42,12 +42,12 @@ def coco_write_anns_to_file(coco, img_id):
     fname = '%s/%012d.%s' % (MAP_GROUND_TRUTH_DIR, img_id, 'txt')
     write_anns_to_file(anns, fname)
 
-def classified_write_anns_to_file(fname, anns):
+def classified_write_anns_to_file(anns, img_id):
     """
     Write the annotations resulting from running the neural network to the file
     $MAP_CLASSIFIED_DIR/$img_id.txt
     """
-    fname = '%s/%s.%s' % (MAP_CLASSIFIED_DIR, img_id, 'txt')
+    fname = '%s/%012d.%s' % (MAP_GROUND_TRUTH_DIR, img_id, 'txt')
     write_anns_to_file(anns, fname)
 
 if __name__ == '__main__':
