@@ -13,20 +13,9 @@ git submodule update
 
 3. Run `./docker.sh download` to download the coco dataset
 
-4. Run `./docker.sh`
+4. Run `./docker.sh shell` for a bash instance in the right virtualenv
 
-For a python shell with access to all of the libraries used, run:
-
-```bash
-./docker.sh python
-```
-
-And for a bash instance under docker, run:
-
-```bash
-./docker.sh shell
-```
-### Installing locally with pipenv (requires python 3.7) - required for gui use
+### Installing locally with pipenv (requires python 3.7) - required for easy gui use
 1. Install `pipenv`:
 ```bash
 pip install --user pipenv
@@ -52,10 +41,11 @@ pipenv install
 pipenv run ./COCO_download.sh
 ```
 
-5. Run `queuetime`:
+5. Run pull up the virtualenv:
 
 ```bash
-pipenv run queuetime
+pipenv shell
 ```
 
-Alternatively the virtual environment can be opened with `pipenv shell`, and then queuetime can be run with `./queuetime`
+## File structure:
+### Top level
