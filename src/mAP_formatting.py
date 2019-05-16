@@ -5,9 +5,10 @@
 
 from file_management import QUEUETIME_DIR
 from annotations import get_image_annotations
+from os.path import basename
 
-MAP_GROUND_TRUTH_DIR = QUEUETIME_DIR + '/data/mAP/ground_truth'
-MAP_CLASSIFIED_DIR = QUEUETIME_DIR + '/data/mAP/classified'
+MAP_GROUND_TRUTH_DIR = QUEUETIME_DIR + '/data/mAP/ground-truth'
+MAP_CLASSIFIED_DIR = QUEUETIME_DIR + '/data/mAP/detection-results'
 
 def bbox_to_txt_line(ann):
     """
@@ -36,12 +37,12 @@ def coco_write_anns_to_file(coco, img_id):
     fname = '%s/%012d.%s' % (MAP_GROUND_TRUTH_DIR, img_id, 'txt')
     write_anns_to_file(anns, fname)
 
-def classified_write_anns_to_file(img_id, anns):
+def classified_write_anns_to_file(fname, anns):
     """
     Write the annotations resulting from running the neural network to the file
     $MAP_CLASSIFIED_DIR/$img_id.txt
     """
-    fname = '%s/%012d.%s' % (MAP_CLASSIFIED_DIR, img_id, 'txt')
+    fname = '%s/%s.%s' % (MAP_CLASSIFIED_DIR, img_id, 'txt')
     write_anns_to_file(anns, fname)
 
 if __name__ == '__main__':
