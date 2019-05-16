@@ -1,3 +1,8 @@
+#!/usr/bin/env python3
+# If this file is called as a script, it will generate mAP files for all
+# image ids listed in the arguments
+#####
+
 from file_management import QUEUETIME_DIR
 from annotations import get_image_annotations
 
@@ -38,3 +43,17 @@ def classified_write_anns_to_file(img_id, anns):
     """
     fname = '%s/%012d.%s' % (MAP_CLASSIFIED_DIR, img_id, 'txt')
     write_anns_to_file(anns, fname)
+
+if __name__ == '__main__':
+    from file_management import ANNOTATION_FILE, get_downloaded_ids
+    from pycocotools.coco import COCO
+    from sys import argv
+
+    coco = COCO(ANNOTATION_FILE)
+
+    for img_id in argv:
+        try:
+            coco_write_anns_to_file(coco, int(img_id))
+        except ValueError:
+            print(img_id, "is not valid")
+            exit(1)
