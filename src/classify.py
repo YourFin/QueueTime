@@ -43,16 +43,17 @@ model = load_model(args["model"])
 # classify the input image
 print("[INFO] classifying image...")
 y_pred = model.predict(image)[0]
-post_pred = QueueTime_post_process(y_pred)
-# anns_unfiltered = cnn_y_to_absolute(CELL_WIDTH, CELL_HEIGHT, proba)
+# post_pred = QueueTime_post_process(y_pred)
+post_pred = cnn_y_to_absolute(CELL_WIDTH, CELL_HEIGHT, y_pred)
 
 # filter out all scores below threshold:
 post_pred_filtered = list(filter(lambda ann: ann['score'] > 0.001, post_pred))
 
 # Add color key:
 scores = [ann['score'] for ann in post_pred_filtered]
-normalize_score = lambda score: (score - min(scores)) / (max(scores) - min(scores))
+normalize_score = lambda score: (score - min(scores)) / (max(scores) - min(scores) + 1e-10)
 for ann in post_pred_filtered:
+    ann['normalized_score'] = normalize_score(ann['score'])
     ann['color'] = plt.cm.jet(normalize_score(ann['score']))
 print('Max score (dark red): ' + str(max(scores)))
 print('Min score (dark blue): ' + str(min(scores)))
