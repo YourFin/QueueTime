@@ -241,7 +241,7 @@ def QueueTime_loss(y_true, y_pred): # should be a BS * CELL_ROW * CELL_COL * 5 t
 def QueueTime_post_process(y_pred, max_boxes_count = 15, iou_threshold = 0.7, score_threshold = 0.5): # y_pred should be a 10*10*5 tensor
 	flatten_absolute_list = cnn_y_to_absolute(64, 64, y_pred) #hard code now!
 	scores = np.empty({100, 1}) #hard code now!
-	absolute_boxes = np.empty(((100, 4)) #hard code now!
+	absolute_boxes = np.empty((100, 4)) #hard code now!
 	counter = 0
 	for entry in flatten_absolute_list:
 		scores[counter, 0] = entry['likelyhood']
