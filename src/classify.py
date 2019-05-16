@@ -32,7 +32,7 @@ ap.add_argument("-f", "--ap-file", action='store_true',
 ap.add_argument("-p", "--no-plot", action='store_true',
                 help='If this flag is passed, do not display the plots')
 ap.add_argument("-a", "--all", action='store_true',
-                help='If this flag is passed, run on ALL images downloaded')
+                help='If this flag is passed, run on ALL images downloaded. Note that you still must pass an image id, but it does nothing.')
 args = vars(ap.parse_args())
 
 
