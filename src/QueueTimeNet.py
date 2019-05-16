@@ -253,8 +253,8 @@ def QueueTime_post_process(y_pred, max_boxes_count = 15, iou_threshold = 0.7, sc
 		absolute_boxes[counter, 2] = entry['bbox'][1] + entry['bbox'][3] #y2 = y1 + h
 	
 	#pass the threshold for score
-	scores_tf = tf.convert_to_tensor(scores)
-	absolute_boxes_tf = tf.convert_to_tensor(absolute_boxes)
+	scores_tf = tf.convert_to_tensor(scores, dtype=tf.float32)
+	absolute_boxes_tf = tf.convert_to_tensor(absolute_boxes, dtype=tf.float32)
 	# prediction_mask = scores_tf >= score_threshold
 	# scores_tf = tf.boolean_mask(scores_tf, prediction_mask)
 	# absolute_boxes_tf = tf.boolean_mask(absolute_boxes_tf, prediction_mask)
