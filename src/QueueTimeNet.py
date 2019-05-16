@@ -238,8 +238,9 @@ def QueueTime_loss(y_true, y_pred): # should be a BS * CELL_ROW * CELL_COL * 5 t
 
 # get rid of the duplicates using non-max suppression. also filter out the boxes
 # with very low score (And calculate the iou between pred and ground truth???)
-def QueueTime_post_process(y_pred, max_boxes_count = 15, iou_threshold = 0.7, score_threshold = 0.5): # y_pred should be a 10*10*5 tensor
+def QueueTime_post_process(y_pred, max_boxes_count = 15, iou_threshold = 0.7, score_threshold = 0.000000001): # y_pred should be a 10*10*5 tensor
 	flatten_absolute_list = cnn_y_to_absolute(64, 64, y_pred) #hard code now!
+	flatten_absolute_list = list(filter(lambda ann: ann['score'] > score_threshold, flatten_absolute_list))
 	scores = np.empty((100, 1)) #hard code now!
 	absolute_boxes = np.empty((100, 4)) #hard code now!
 	counter = 0
@@ -254,9 +255,9 @@ def QueueTime_post_process(y_pred, max_boxes_count = 15, iou_threshold = 0.7, sc
 	#pass the threshold for score
 	scores_tf = tf.convert_to_tensor(scores)
 	absolute_boxes_tf = tf.convert_to_tensor(absolute_boxes)
-	prediction_mask = scores_tf >= score_threshold
-	scores_tf = tf.boolean_mask(scores_tf, prediction_mask)
-	absolute_boxes_tf = tf.boolean_mask(absolute_boxes_tf, prediction_mask)
+	# prediction_mask = scores_tf >= score_threshold
+	# scores_tf = tf.boolean_mask(scores_tf, prediction_mask)
+	# absolute_boxes_tf = tf.boolean_mask(absolute_boxes_tf, prediction_mask)
 
 	#after gathering
 	#nms_index should be 1*15
