@@ -4,3 +4,6 @@
 [submodule "pretrained-labeling/Mask_RCNN"]
 	path = pretrained-labeling/Mask_RCNN
 	url = https://github.com/matterport/Mask_RCNN.git
+[submodule "mAP"]
+	path = mAP
+	url = https://github.com/Cartucho/mAP
