@@ -47,7 +47,13 @@ def download_some_imgs(coco, image_count):
 
 if __name__ == '__main__':
     from pycocotools.coco import COCO
+    import argparse
 
-    NUM_IMAGES = 3  # -1 for all
+    ap = argparse.ArgumentParser()
+    ap.add_argument('NUM_IMGS', metavar='num_imgs', type=int, nargs=1,
+                    default=10, help="Number of images to download")
+    args = vars(ap.parse_args())
+
+    NUM_IMAGES = args['num_imgs']
     coco = COCO(ANNOTATION_FILE)
     download_some_imgs(coco, NUM_IMAGES)
