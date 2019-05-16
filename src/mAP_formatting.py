@@ -21,7 +21,7 @@ def bbox_to_txt_line(ann):
         confidence = ann['normalized_score']
         return "human %.6f %d %d %d %d\n" % (confidence, bbox[0], bbox[1], right, bottom)
     else:
-        return "human %d %d %d %d\n" % (confidence, bbox[0], bbox[1], right, bottom)
+        return "human %d %d %d %d\n" % (bbox[0], bbox[1], right, bottom)
 
 def write_anns_to_file(anns, fname):
     """
