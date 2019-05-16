@@ -103,8 +103,8 @@ def get_y_true(coco, bounding_box_count, cell_width_px, cell_height_px, img_id):
         rel_center_y = (abs_center_y - (cell_y_pos * cell_height_px)) / cell_height_px
 
         # Find the size of the bounding box relative to the cell
-        rel_width = width / cell_width_px
-        rel_height = height / cell_height_px
+        rel_width = (width / cell_width_px ) / 10 #hard code
+        rel_height = (height / cell_height_px) / 10 #hard code
 
         # TODO: Move to handling more than one bounding box
         # if y_true[cell_y_pos, cell_x_pos, POS_OBJ_SCORE] != NO_OBJECT_WEIGHT:

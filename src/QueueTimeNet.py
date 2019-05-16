@@ -170,8 +170,8 @@ def QueueTime_loss(y_true, y_pred): # should be a BS * CELL_ROW * CELL_COL * 5 t
 	print("[INFO] ytrue", y_true)
 	print("[INFO] ypred", y_pred)
 
-	coord = 5
-	noobj = 0.5
+	coord = 3
+	noobj = 0.1
 
 	indicator = y_true[...,0]
 	print("[INFO] indicator", indicator)
@@ -183,8 +183,8 @@ def QueueTime_loss(y_true, y_pred): # should be a BS * CELL_ROW * CELL_COL * 5 t
 	print("[INFO] xy_loss ? 10 10 [[[1]]]", xy_loss)
 
 
-	w_loss = K.square(K.sqrt(0.1*y_true[...,3]) - K.sqrt(0.1*y_pred[...,3])) #hard code now
-	h_loss = K.square(K.sqrt(0.1*y_true[...,4]) - K.sqrt(0.1*y_pred[...,4])) #hard code now
+	w_loss = K.square(K.sqrt(y_true[...,3]) - K.sqrt(y_pred[...,3])) #hard code now
+	h_loss = K.square(K.sqrt(y_true[...,4]) - K.sqrt(y_pred[...,4])) #hard code now
 	wh_loss = coord * indicator*(w_loss+h_loss)
 
        

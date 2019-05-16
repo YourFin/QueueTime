@@ -101,8 +101,8 @@ def cnn_y_to_absolute(cell_width, cell_height, output_data):
                 rel_width = output_data[y_cell, x_cell, box_num * 5 + POS_BOX_WIDTH]
                 rel_height = output_data[y_cell, x_cell, box_num * 5 + POS_BOX_HEIGHT]
 
-                absolute_width = rel_width * cell_width
-                absolute_height = rel_height * cell_height
+                absolute_width = rel_width * cell_width * 10 #hard code
+                absolute_height = rel_height * cell_height * 10 #hard code
 
                 rel_box_center_x = output_data[y_cell, x_cell, box_num * 5 + POS_BOX_CENTER_X]
                 rel_box_center_y = output_data[y_cell, x_cell, box_num * 5 + POS_BOX_CENTER_Y]
