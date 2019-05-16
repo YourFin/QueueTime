@@ -14,6 +14,7 @@ from QueueTimeNet import QueueTime_loss, QueueTime_post_process
 from keras.utils.generic_utils import get_custom_objects
 from preprocessing import pad_image, PADDED_SIZE
 from train import CELL_WIDTH, CELL_HEIGHT
+from mAP_formatting import classified_write_anns_to_file
 import numpy as np
 import matplotlib as plt
 
@@ -26,6 +27,10 @@ ap.add_argument("-m", "--model", required=True,
 # 	help="path to label binarizer")
 ap.add_argument("-i", "--image", required=True,
                 help="input image id", type=int)
+ap.add_argument("-f", "--ap-file", action='store_true',
+                help='Write out classification to corresponding mAP file')
+ap.add_argument("-p", "--no-plot", action='store_false',
+                help='If this flag is passed, do not display the plots')
 args = vars(ap.parse_args())
 
 img_id = args["image"]
@@ -58,7 +63,12 @@ for ann in post_pred_filtered:
 print('Max score (dark red): ' + str(max(scores)))
 print('Min score (dark blue): ' + str(min(scores)))
 
-plot_annotations(img_id, post_pred_filtered)
+if not args['no_plot']:
+    plot_annotations(img_id, post_pred_filtered)
+if args['ap_file']:
+    classified_write_anns_to_file(args['image'], post_pred_filtered)
+
+
 
 
 # # we'll mark our prediction as "correct" of the input image filename
