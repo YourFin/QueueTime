@@ -244,7 +244,7 @@ def QueueTime_post_process(y_pred, max_boxes_count = 15, iou_threshold = 0.7, sc
 	absolute_boxes = np.empty((100, 4)) #hard code now!
 	counter = 0
 	for entry in flatten_absolute_list:
-		scores[counter, 0] = entry['likelyhood']
+		scores[counter, 0] = entry['score']
 		# tensorflow needs [y1, x1, y2, x2]
 		absolute_boxes[counter, 1] = entry['bbox'][0] #x1
 		absolute_boxes[counter, 0] = entry['bbox'][1] #y1

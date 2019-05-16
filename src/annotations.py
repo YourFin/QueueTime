@@ -22,7 +22,7 @@ from math import floor
 #  If the 'color' key exist in anns, that is used as the color instead of
 #   $color
 # Practica:
-#  As an example of coloring by likelyhood:
+#  As an example of coloring by score:
 #  # Assume $output is the output of the NN
 #  anns = cnn_y_to_absolute(CELLL_WIDTH, CELL_HEIGHT, output)
 #  for ann in anns:
