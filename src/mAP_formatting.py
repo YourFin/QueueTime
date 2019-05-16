@@ -19,10 +19,9 @@ def bbox_to_txt_line(ann):
     bottom = bbox[1] + bbox[3]
     if 'normalized_score' in ann:
         confidence = ann['normalized_score']
+        return "human %.6f %d %d %d %d\n" % (confidence, bbox[0], bbox[1], right, bottom)
     else:
-        # If there isn't a normalized score, this is coming from the ground truth
-        confidence = 1
-    return "human %.6f %d %d %d %d\n" % (confidence, bbox[0], bbox[1], right, bottom)
+        return "human %d %d %d %d\n" % (confidence, bbox[0], bbox[1], right, bottom)
 
 def write_anns_to_file(anns, fname):
     """
