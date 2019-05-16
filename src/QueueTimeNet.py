@@ -170,8 +170,8 @@ def QueueTime_loss(y_true, y_pred): # should be a BS * CELL_ROW * CELL_COL * 5 t
 	print("[INFO] ytrue", y_true)
 	print("[INFO] ypred", y_pred)
 
-	coord = 3
-	noobj = 0.1
+	coord = 5
+	noobj = 0.5
 
 	indicator = y_true[...,0]
 	print("[INFO] indicator", indicator)
@@ -220,8 +220,8 @@ def QueueTime_loss(y_true, y_pred): # should be a BS * CELL_ROW * CELL_COL * 5 t
 	# print("[INFO] true_box_conf ? 10 10", true_box_conf) #expect ?*10*10 here
 	
 
-	pr_loss_pos = indicator * K.square(iou_scores * y_true[..., 0] - y_pred[...,0])
-	pr_loss_neg = noobj*(1-indicator) * K.square(iou_scores * y_true[..., 0] - y_pred[...,0])
+	pr_loss_pos = indicator * K.square(iou_scores * (y_true[..., 0] - y_pred[...,0]))
+	pr_loss_neg = noobj*(1-indicator) * K.square(iou_scores * (y_true[..., 0] - y_pred[...,0]))
 	print("[INFO] pr_loss_neg ? 10 10", pr_loss_neg) #expect ?*10*10 here
 
 	# m = K.int_shape(y_true)
