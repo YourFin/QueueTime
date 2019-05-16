@@ -53,6 +53,7 @@ if __name__ == '__main__':
     from file_management import ANNOTATION_FILE, get_downloaded_ids
     from pycocotools.coco import COCO
     from sys import argv
+    import os
 
     coco = COCO(ANNOTATION_FILE)
 
