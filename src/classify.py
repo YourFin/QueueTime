@@ -12,7 +12,7 @@ from file_management import get_image, get_downloaded_ids
 from annotations import cnn_y_to_absolute, plot_annotations
 from QueueTimeNet import QueueTime_loss, QueueTime_post_process
 from keras.utils.generic_utils import get_custom_objects
-from preprocessing import pad_image, PADDED_SIZE
+from preprocessing import pad_image, PADDED_SIZE, is_not_greyscale
 from train import CELL_WIDTH, CELL_HEIGHT
 from mAP_formatting import classified_write_anns_to_file
 import numpy as np
@@ -45,7 +45,7 @@ model = load_model(args["model"])
 
 img_ids = args["image_ids"]
 if args['all']:
-    img_ids = get_downloaded_ids()
+    img_ids = filter(is_not_greyscale, get_downloaded_ids())
 
 for img_id in img_ids:
     image = pad_image(get_image(img_id), PADDED_SIZE)
