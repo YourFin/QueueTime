@@ -62,7 +62,7 @@ if __name__ == '__main__':
                                                git submodule update
                                                """
 
-    for img_id in get_downloaded_ids(): # argv:
+    for img_id in argv:
         try:
             coco_write_anns_to_file(coco, int(img_id))
         except ValueError:
