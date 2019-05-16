@@ -10,7 +10,7 @@ from keras.models import load_model
 import argparse
 from file_management import get_image
 from annotations import cnn_y_to_absolute, plot_annotations
-from QueueTimeNet import QueueTime_loss
+from QueueTimeNet import QueueTime_loss, QueueTime_post_process
 from keras.utils.generic_utils import get_custom_objects
 from preprocessing import pad_image, PADDED_SIZE
 from train import CELL_WIDTH, CELL_HEIGHT
@@ -33,32 +33,31 @@ img_id = args["image"]
 image = pad_image(get_image(img_id), PADDED_SIZE)
 image = np.expand_dims(image, axis=0)
 
-# load the trained convolutional neural network and the label
-# binarizer
+# load the trained convolutional neural network
 print("[INFO] loading network...")
 # Load in the custom loss function
 get_custom_objects().update({"QueueTime_loss": QueueTime_loss})
 
 model = load_model(args["model"])
-# lb = pickle.loads(open(args["labelbin"], "rb").read())
 
 # classify the input image
 print("[INFO] classifying image...")
-proba = model.predict(image)[0]
-anns_unfiltered = cnn_y_to_absolute(CELL_WIDTH, CELL_HEIGHT, proba)
+y_pred = model.predict(image)[0]
+post_pred = QueueTime_post_process(y_pred)
+# anns_unfiltered = cnn_y_to_absolute(CELL_WIDTH, CELL_HEIGHT, proba)
 
 # filter out all scores below threshold:
-anns = list(filter(lambda ann: ann['score'] > 0.001, anns_unfiltered))
+post_pred_filtered = list(filter(lambda ann: ann['score'] > 0.001, post_pred))
 
 # Add color key:
-scores = [ann['score'] for ann in anns]
+scores = [ann['score'] for ann in post_pred_filtered]
 normalize_score = lambda score: (score - min(scores)) / (max(scores) - min(scores))
-for ann in anns:
+for ann in post_pred_filtered:
     ann['color'] = plt.cm.jet(normalize_score(ann['score']))
 print('Max score (dark red): ' + str(max(scores)))
 print('Min score (dark blue): ' + str(min(scores)))
 
-plot_annotations(img_id, anns)
+plot_annotations(img_id, post_pred_filtered)
 
 
 # # we'll mark our prediction as "correct" of the input image filename
