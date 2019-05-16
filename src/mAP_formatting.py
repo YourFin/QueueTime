@@ -5,10 +5,9 @@
 
 from file_management import QUEUETIME_DIR
 from annotations import get_image_annotations
-from os.path import basename
 
-MAP_GROUND_TRUTH_DIR = QUEUETIME_DIR + '/data/mAP/ground-truth'
-MAP_CLASSIFIED_DIR = QUEUETIME_DIR + '/data/mAP/detection-results'
+MAP_GROUND_TRUTH_DIR = QUEUETIME_DIR + '/mAP/input/ground-truth'
+MAP_CLASSIFIED_DIR   = QUEUETIME_DIR + '/mAP/input/detection-results'
 
 def bbox_to_txt_line(ann):
     """
@@ -56,6 +55,12 @@ if __name__ == '__main__':
     from sys import argv
 
     coco = COCO(ANNOTATION_FILE)
+
+    assert os.path.exists(MAP_CLASSIFIED_DIR), """
+                                               mAP dirs do not exist, run:
+                                               git submodule init
+                                               git submodule update
+                                               """
 
     for img_id in argv:
         try:
