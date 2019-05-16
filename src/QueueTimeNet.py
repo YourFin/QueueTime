@@ -34,13 +34,14 @@ def build(width, height, depth, classes):
 	model.add(BatchNormalization(axis=chanDim)) #order matters?
 	model.add(LeakyReLU(alpha=0.1)) #order matters?
 	model.add(MaxPooling2D(pool_size=(2, 2)))
-	
+	# should result in 160*160*64
+
 	# Conv. Layer 3x3x192
 	model.add(Conv2D(192, (3, 3), padding="same"))
 	model.add(BatchNormalization(axis=chanDim))
 	model.add(LeakyReLU(alpha=0.1))
 	model.add(MaxPooling2D(pool_size=(2, 2)))
-
+	# should result in 80*80*192
 
 	# Conv. Layers *4
 	model.add(Conv2D(128, (1, 1), padding="same"))
@@ -59,6 +60,7 @@ def build(width, height, depth, classes):
 	model.add(BatchNormalization(axis=chanDim))
 	model.add(LeakyReLU(alpha=0.1))
 	model.add(MaxPooling2D(pool_size=(2, 2)))
+	# should result in 40*40*512
 
 	# Conv. Layers  4*2 + 2 
 	model.add(Conv2D(256, (1, 1), padding="same"))
@@ -101,6 +103,7 @@ def build(width, height, depth, classes):
 	model.add(BatchNormalization(axis=chanDim))
 	model.add(LeakyReLU(alpha=0.1))
 	model.add(MaxPooling2D(pool_size=(2, 2)))
+	# should result in 20*20*1024
 
 	# Conv. Layer * 2*2 + 2
 	model.add(Conv2D(512, (1, 1), padding="same"))
@@ -126,6 +129,7 @@ def build(width, height, depth, classes):
 	model.add(Conv2D(1024, (3, 3), strides = 2, padding="same"))
 	model.add(BatchNormalization(axis=chanDim))
 	model.add(LeakyReLU(alpha=0.1))
+	# should result in 10*10*1024
 
 	# Conv. Layer * 2
 	model.add(Conv2D(1024, (3, 3), padding="same"))
@@ -135,6 +139,7 @@ def build(width, height, depth, classes):
 	model.add(Conv2D(1024, (3, 3), padding="same"))
 	model.add(BatchNormalization(axis=chanDim))
 	model.add(LeakyReLU(alpha=0.1))
+	# should result in 10*10*1024
 
 	# first FC
 	# model.add(Flatten())
@@ -145,6 +150,7 @@ def build(width, height, depth, classes):
 	model.add(Dropout(0.5))
 	model.add(Conv2D(5, (3, 3), padding="same"))
 	model.add(Activation("relu"))
+	# should result in 10*10*5
 	# model.add(BatchNormalization())
 
 	# softmax classifier
@@ -214,8 +220,8 @@ def QueueTime_loss(y_true, y_pred): # should be a BS * CELL_ROW * CELL_COL * 5 t
 	# print("[INFO] true_box_conf ? 10 10", true_box_conf) #expect ?*10*10 here
 	
 
-	pr_loss_pos = indicator * K.square(iou_scores * (y_true[..., 0] - y_pred[...,0]))
-	pr_loss_neg = noobj*(1-indicator) * K.square(iou_scores * (y_true[..., 0] - y_pred[...,0]))
+	pr_loss_pos = indicator * K.square(iou_scores * y_true[..., 0] - y_pred[...,0])
+	pr_loss_neg = noobj*(1-indicator) * K.square(iou_scores * y_true[..., 0] - y_pred[...,0])
 	print("[INFO] pr_loss_neg ? 10 10", pr_loss_neg) #expect ?*10*10 here
 
 	# m = K.int_shape(y_true)
