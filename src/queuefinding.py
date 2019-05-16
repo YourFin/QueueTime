@@ -70,7 +70,6 @@ def heatmap_bounding_box_sum(heatmap, bbox):
     normalized_sum = np.mean(sub_hm)
     return normalized_sum
 
-
 def test_abs_anns_to_heatmap():
     import matplotlib.pyplot as plt
     from matplotlib import cm

@@ -11,7 +11,8 @@ QUEUETIME_DIR = dirname(dirname(os.path.abspath(__file__)))
 
 def playback_with_labels(video_path, annotations,
                          start_frame=0, end_frame=None,
-                         annotation_filter=lambda frame_num, annotation: True):
+                         annotation_filter=lambda frame_num, annotation: True,
+                         frame_delay=0):
     """
     Play back the video at $video_path with $annotations rectangles on top
 
@@ -26,6 +27,9 @@ def playback_with_labels(video_path, annotations,
      annotation that is being drawn
      $annotation_filter defaults to a constant True function, i.e. all
       annotations shown
+
+    To provide a way to slow down video playback, the video pauses for
+    $frame_delay seconds between each frame.
     """
 
     # Thickness of rectangles in pixels
@@ -66,7 +70,7 @@ def playback_with_labels(video_path, annotations,
 
         cv2.imshow('Video', frame)
 
-        sleep(0.05)
+        sleep(frame_delay)
         if cv2.waitKey(10) & 0xFF == ord('q'):
             break
 

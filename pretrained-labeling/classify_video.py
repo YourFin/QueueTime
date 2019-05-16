@@ -7,6 +7,8 @@ if __name__ == '__main__':
     import os
     import argparse
     import json
+    from matplotlib import cm
+    import matplotlib.pyplot as plt
     from pathlib import Path
 
     ap = argparse.ArgumentParser()
@@ -22,6 +24,7 @@ if __name__ == '__main__':
                     default=1)
     ap.add_argument("-k", "--kernel-size", type=float, help="Gaussian Kernel size",
                     default=5)
+    ap.add_argument("-m", "--display-heat-map", action='store_true', help="display the heatmap")
     # Annotations file should be a json file with the format:
     # [[{'bbox': [x,y,w,h], 'score': float}]]
     #   - outer list is by frame, inner list is for each annotation
@@ -42,13 +45,19 @@ if __name__ == '__main__':
         print("video does not exist")
         exit(1)
     (rows, cols, _) = frame.shape
-    print(rows, cols)
     heatmap = abs_anns_to_heatmap(cols, rows,
                                   [ann for frame in annotations[arguments['start_frame']:arguments['end_frame']] for ann in frame])
 
+    if arguments['display_heat_map']:
+        print('hello')
+        plt.figure(1)
+        fig, ax = plt.subplots()
+        ax.imshow(heatmap) #, cmap=cm.jet)
+        plt.show()
+
     def filt(_, ann):
         score = heatmap_bounding_box_sum(heatmap, ann['bbox'])
-        print(score)
+        #print(score)
         return score > arguments['threshold']
 
     playback_with_labels(str(arguments['video']), annotations,
