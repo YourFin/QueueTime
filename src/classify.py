@@ -8,7 +8,7 @@
 # import the necessary packages
 from keras.models import load_model
 import argparse
-from file_management import get_image
+from file_management import get_image, get_downloaded_ids
 from annotations import cnn_y_to_absolute, plot_annotations
 from QueueTimeNet import QueueTime_loss, QueueTime_post_process
 from keras.utils.generic_utils import get_custom_objects
@@ -31,6 +31,8 @@ ap.add_argument("-f", "--ap-file", action='store_true',
                 help='Write out classification to corresponding mAP file')
 ap.add_argument("-p", "--no-plot", action='store_true',
                 help='If this flag is passed, do not display the plots')
+ap.add_argument("-a", "--all", action='store_true',
+                help='If this flag is passed, run on ALL images downloaded')
 args = vars(ap.parse_args())
 
 
@@ -42,6 +44,8 @@ get_custom_objects().update({"QueueTime_loss": QueueTime_loss})
 model = load_model(args["model"])
 
 img_ids = args["image_ids"]
+if args['all']:
+    img_ids = get_downloaded_ids()
 
 for img_id in img_ids:
     image = pad_image(get_image(img_id), PADDED_SIZE)
