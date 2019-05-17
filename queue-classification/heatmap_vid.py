@@ -53,7 +53,6 @@ if __name__ == '__main__':
     if arguments['display_heat_map']:
         heatmap = abs_anns_to_heatmap(cols, rows,
                                     [ann for frame in annotations[arguments['start_frame']:arguments['start_frame'] + arguments['frame_count']] for ann in frame])
-        print('hello')
         plt.figure(1)
         fig, ax = plt.subplots()
         ax.imshow(heatmap) #, cmap=cm.jet)
